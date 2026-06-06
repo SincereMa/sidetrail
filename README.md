@@ -84,11 +84,41 @@ The full principle set lives in [AGENTS.md](AGENTS.md).
 
 ## Status
 
-Early development. The v0 CLI surface (add, get, list, validate)
-is in place but no installable binary is published yet. The
-problems the project exists to address are recorded in
-[docs/scope.md](docs/scope.md); the architectural decisions that
-follow from them live in [docs/decisions/](docs/decisions/).
+Early development. The v0 CLI surface is in place; tagged builds
+are published as GitHub releases. The problems the project exists
+to address are recorded in [docs/scope.md](docs/scope.md); the
+architectural decisions that follow from them live in
+[docs/decisions/](docs/decisions/).
+
+## Install
+
+The fastest path is a one-liner. It downloads the latest release
+for your OS and architecture, verifies the SHA-256, and drops the
+`cortex` binary on disk.
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/SincereMa/cortex-sidemark/main/scripts/install.sh | sh
+```
+
+On Windows, from PowerShell:
+
+```powershell
+iwr https://raw.githubusercontent.com/SincereMa/cortex-sidemark/main/scripts/install.ps1 -useb | iex
+```
+
+Both scripts accept flags. See `scripts/install.sh --help` or
+`Get-Help ./scripts/install.ps1` for options. The binary lands in
+`~/.local/bin` (or `%USERPROFILE%\bin` on Windows) by default; add
+that directory to `PATH` if it is not already.
+
+For a pinned version, set `CORTEX_VERSION=v0.1.0` (or pass
+`--version` / `-Version`). For a custom install location, set
+`CORTEX_INSTALL_DIR` (or pass `--dir` / `-InstallDir`).
+
+If you prefer to install manually, download a release archive from
+the [GitHub releases page](https://github.com/SincereMa/cortex-sidemark/releases),
+verify it against the matching `*_checksums.txt`, and place the
+`cortex` binary anywhere on `PATH`.
 
 ## Project layout
 
