@@ -37,3 +37,32 @@ jobs:
         with:
           version: v1.61.0
           args: --timeout=5m
+
+  goreleaser:
+    name: goreleaser-config
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Install GoReleaser
+        run: go install github.com/goreleaser/goreleaser/v2@latest
+      - name: Validate config
+        run: goreleaser check
+
+  install-scripts:
+    name: install-scripts
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Install shellcheck
+        run: sudo apt-get update && sudo apt-get install -y shellcheck
+      - name: Bash syntax
+        run: bash -n scripts/install.sh
+      - name: ShellCheck
+        run: shellcheck scripts/install.sh
+      - name: PowerShell syntax
+        uses: microsoft/powershell-actions@v4
+        with:
+          action: check
+          path: scripts/install.ps1
