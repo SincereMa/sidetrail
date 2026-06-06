@@ -71,6 +71,36 @@ func (s *Store) Write(r *record.Record) (string, error) {
 	if err := os.MkdirAll(dir, 0o755); err != nil {
 		return "", fmt.Errorf("mkdir %q: %w", dir, err)
 	}
+	return s.writeToDir(r, dir)
+}
+
+// WriteSeed persists r under the .cortex/_seed/ subdirectory.
+// Seeds are scrape-derived candidates waiting for human review;
+// they live in their own subdirectory so the canonical kind
+// listings (decisions, constraints, ...) do not surface them
+// without an explicit --include-seed flag (a future PR).
+//
+// The Kind field on a seed record is still required to be valid;
+// WriteSeed is "where to write" not "what to validate".
+func (s *Store) WriteSeed(r *record.Record) (string, error) {
+	if !r.Kind.Valid() {
+		return "", fmt.Errorf("invalid kind: %q", r.Kind)
+	}
+	if r.ID == "" {
+		return "", fmt.Errorf("record id must not be empty")
+	}
+	dir := filepath.Join(s.root, "_seed")
+	if err := os.MkdirAll(dir, 0o755); err != nil {
+		return "", fmt.Errorf("mkdir %q: %w", dir, err)
+	}
+	return s.writeToDir(r, dir)
+}
+
+// writeToDir is the common path of Write and WriteSeed. The
+// caller has already validated the record and ensured dir
+// exists. The atomic-write plumbing lives here so both entry
+// points behave identically.
+func (s *Store) writeToDir(r *record.Record, dir string) (string, error) {
 	slug := record.Slug(r.Subject)
 	name := fmt.Sprintf("%s-%s.json", r.ID, slug)
 	path := filepath.Join(dir, name)

@@ -116,12 +116,20 @@ by walking upward from the current working directory unless
 | `cortex list [--kind K] [--limit N] [--json]` | List records, newest first. |
 | `cortex ask --scope <s> [--kind] [--tag] [--limit] [--json]` | Query records whose scope matches a pattern. |
 | `cortex context --file <path> [--radius N] [--limit] [--json]` | Aggregate records relevant to a file path. |
+| `cortex verify <id>` | Refresh a record's `last_verified_at`. |
+| `cortex supersede <old-id> --new <file>` | Mark a record superseded and add a replacement. |
+| `cortex init [--root <project>] [--no-write]` | Seed a `.cortex/` store from existing project docs. |
 | `cortex validate <file>... [--json]` | Validate record files against the schema. |
 
 The first host-agent integration point is `cortex context`: point
 it at the file the agent is about to edit, and it returns the
 records the team has filed about that file and its enclosing
 scopes.
+
+`cortex init` is the cold-start path. It scans the canonical
+project paths and writes scrape-derived candidate records to
+`.cortex/_seed/`. Skipping init is valid; the sidecar is usable
+from empty.
 
 ## Contributing
 
