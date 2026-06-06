@@ -266,3 +266,125 @@ func sortByCreatedAtDesc(recs []*record.Record) {
 		return recs[i].CreatedAt.After(recs[j].CreatedAt)
 	})
 }
+
+// Ask returns records whose scope matches the pattern, optionally
+// filtered by kind and tag, sorted newest first and capped at
+// limit. A non-positive limit means "no cap".
+//
+// The scope match rule is record.MatchScope: exact match or
+// strict descendant. An empty scope pattern returns nil; the
+// caller is expected to require a scope.
+func (s *Store) Ask(scope, kind, tag string, limit int) ([]*record.Record, error) {
+	all, err := s.ListAll()
+	if err != nil {
+		return nil, err
+	}
+	out := make([]*record.Record, 0, len(all))
+	for _, r := range all {
+		if scope != "" && !record.MatchScope(r.Scope, scope) {
+			continue
+		}
+		if kind != "" && string(r.Kind) != kind {
+			continue
+		}
+		if tag != "" && !recordHasTag(r, tag) {
+			continue
+		}
+		out = append(out, r)
+	}
+	sortByCreatedAtDesc(out)
+	if limit > 0 && len(out) > limit {
+		out = out[:limit]
+	}
+	return out, nil
+}
+
+// ContextFor returns records relevant to a file: the records
+// whose scope equals the file path, plus the records whose scope
+// is an ancestor directory of the file path, up to `radius`
+// levels. Results are sorted newest first and capped at limit.
+//
+// Radius semantics: radius=0 keeps only the file path itself;
+// radius=1 also includes the immediate parent directory;
+// radius=2 adds the grandparent; and so on. A non-positive
+// radius means "walk all the way to the filesystem root".
+//
+// The file path is used as-is. It is not resolved against the
+// store root and is not required to exist on disk; the function
+// is a retrieval over stored scopes, not a filesystem walk.
+func (s *Store) ContextFor(file string, radius, limit int) ([]*record.Record, error) {
+	if file == "" {
+		return nil, fmt.Errorf("file must not be empty")
+	}
+	patterns := ancestorScopes(file, radius)
+	all, err := s.ListAll()
+	if err != nil {
+		return nil, err
+	}
+	out := make([]*record.Record, 0, len(all))
+	seen := make(map[string]struct{}, len(all))
+	for _, r := range all {
+		if !scopeMatchesAny(r.Scope, patterns) {
+			continue
+		}
+		if _, dup := seen[r.ID]; dup {
+			continue
+		}
+		seen[r.ID] = struct{}{}
+		out = append(out, r)
+	}
+	sortByCreatedAtDesc(out)
+	if limit > 0 && len(out) > limit {
+		out = out[:limit]
+	}
+	return out, nil
+}
+
+// recordHasTag reports whether r has tag in its Tags slice. An
+// empty tag list never matches.
+func recordHasTag(r *record.Record, tag string) bool {
+	for _, t := range r.Tags {
+		if t == tag {
+			return true
+		}
+	}
+	return false
+}
+
+// ancestorScopes returns the candidate scopes for ContextFor:
+// the file path itself, then each parent directory up to radius
+// levels deep. A non-positive radius means "no limit".
+func ancestorScopes(file string, radius int) []string {
+	clean := filepath.Clean(file)
+	dir := filepath.Dir(clean)
+	out := []string{clean}
+	if dir == clean || dir == "." || dir == string(filepath.Separator) {
+		return out
+	}
+	for i := 0; ; i++ {
+		out = append(out, dir)
+		if radius > 0 && i+1 >= radius {
+			break
+		}
+		parent := filepath.Dir(dir)
+		if parent == dir {
+			break
+		}
+		dir = parent
+	}
+	return out
+}
+
+// scopeMatchesAny reports whether scope matches any pattern in
+// patterns. An exact equality on any pattern is sufficient;
+// descendant match is not applied here because the patterns come
+// from a fixed ancestor walk, so equality already captures
+// "the file's own scope" and "an ancestor directory's scope".
+func scopeMatchesAny(scope string, patterns []string) bool {
+	for _, p := range patterns {
+		if scope == p {
+			return true
+		}
+	}
+	return false
+}
