@@ -209,7 +209,7 @@ Beyond the ADRs, these are conventions that span the codebase:
 - A `.cortex/_seed/`, `_proposed/`, or `_derived/` subdirectory
   holds machine-claimed records. They never appear in
   `cortex ask` results without an explicit `--include-seed`
-  flag (PR-3 and beyond).
+  flag.
 - Cross-platform discipline is enforced in review. A PR that
   uses `os/exec` with a shell, hard-codes a path separator, or
   reaches for `syscall` is rejected even if the tests pass.
