@@ -1,12 +1,12 @@
-# AGENTS.md — SideMark
+# AGENTS.md — Cortex SideMark
 
 > A sidecar tool that adds long-lived auxiliary memory to mainstream AI agents — without modifying them.
 
 ## Mission
 
-SideMark is an **auxiliary / sidecar tool** for mainstream AI agents. It runs *alongside* an existing host agent (e.g. Claude Code, Cursor, Aider) and adds long-lived memory — decisions, constraints, health signals, project context — without forking, patching, or injecting into the host.
+Cortex SideMark is an **auxiliary / sidecar tool** for mainstream AI agents. It runs *alongside* an existing host agent (e.g. Claude Code, Cursor, Aider) and adds long-lived memory — decisions, constraints, health signals, project context — without forking, patching, or injecting into the host.
 
-The word *side* is load-bearing. SideMark is an **addition**, never a replacement.
+The word *side* is load-bearing. Cortex SideMark is an **addition**, never a replacement.
 
 ## Non-negotiable principles
 
@@ -29,7 +29,7 @@ These are hard constraints, not aspirations. Any change that violates them is a 
 
 ## Product surface
 
-The categories of auxiliary memory SideMark records. New categories need a concrete use case, not just an idea.
+The categories of auxiliary memory Cortex SideMark records. New categories need a concrete use case, not just an idea.
 
 - **Decisions** — choices the user has made, with reasoning, so future sessions do not re-litigate them.
 - **Boundaries / constraints** — explicit *do not do* rules or hard limits on a project.
