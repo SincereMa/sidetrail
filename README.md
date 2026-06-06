@@ -31,4 +31,4 @@ Issues and pull requests are welcome. Please read
 
 ## License
 
-[MIT](./LICENSE). Copyright (c) 2026 The SideMark Authors.
+[MIT](./LICENSE). Copyright (c) 2026 Cortex SideMark Authors.
