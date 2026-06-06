@@ -32,6 +32,11 @@ write a record.`,
 		SilenceErrors: true,
 	}
 	cmd.SetVersionTemplate("cortex {{.Version}} (commit " + version.Commit + ")\n")
-	cmd.AddCommand(newValidateCmd())
+	cmd.AddCommand(
+		newValidateCmd(),
+		newAddCmd(),
+		newGetCmd(),
+		newListCmd(),
+	)
 	return cmd
 }
