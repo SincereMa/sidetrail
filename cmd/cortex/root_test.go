@@ -1,3 +1,4 @@
+// Package cortex is the test surface for the root command.
 package cortex
 
 import (
@@ -6,6 +7,9 @@ import (
 	"testing"
 )
 
+// TestRootHelp verifies the --help output mentions the project
+// name. A passing test here is a smoke check that the long
+// description is wired in.
 func TestRootHelp(t *testing.T) {
 	cmd := newRootCmd()
 	var out bytes.Buffer
@@ -19,6 +23,9 @@ func TestRootHelp(t *testing.T) {
 	}
 }
 
+// TestRootVersion verifies the --version output starts with the
+// binary name. The exact version string is set at build time via
+// ldflags, so the test only checks the prefix.
 func TestRootVersion(t *testing.T) {
 	cmd := newRootCmd()
 	var out bytes.Buffer

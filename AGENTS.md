@@ -75,12 +75,35 @@ needs a concrete use case, not just an idea.
   link to the actual command in `README.md` or a script. Never
   write instructions that do not run.
 
+## Code conventions (binding)
+
+Code in this repository must follow
+[docs/code-conventions.md](./code-conventions.md). That document
+is binding for every contributor, human or AI. Highlights that
+AI agents most often get wrong:
+
+- **Every exported name has a doc comment** starting with the
+  name itself. `// ValidateRecord reports whether ...`, not
+  `// Validates a record.`
+- **Every package has a `// Package x ...` doc comment.**
+- **Errors carry context**: `fmt.Errorf("read %q: %w", path, err)`.
+  Use `%w`, not `%v`, when wrapping.
+- **No shell calls**: `os/exec` invokes a binary with explicit
+  args; `sh -c` and `cmd /c` are forbidden.
+- **No raw path separators**: `filepath.Join` everywhere.
+- **English-only** in code, comments, commit messages, and PR
+  descriptions.
+
+A PR that violates these rules is a regression even if its
+tests pass.
+
 ## Pointers
 
 | Path | Purpose |
 | --- | --- |
 | `README.md` | Project pitch; the real install command (once one exists). |
 | `docs/scope.md` | The five problems this project addresses; input to ADRs. |
+| `docs/code-conventions.md` | Binding code style and review rules. |
 | `docs/decisions/` | Architectural decision records. |
 | `docs/agents/` | Per-host-agent adapter specifications. |
 | `CONTRIBUTING.md` | How to file issues and submit changes. |

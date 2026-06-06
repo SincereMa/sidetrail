@@ -1,0 +1,183 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cortex-sidemark/schemas/record.json",
+  "title": "Cortex SideMark record",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "kind",
+    "scope",
+    "subject",
+    "reason",
+    "source_type",
+    "author",
+    "created_at",
+    "last_verified_at",
+    "status"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "kind": {
+      "type": "string",
+      "enum": ["decision", "constraint", "signal", "experiment", "incident"]
+    },
+    "scope": {
+      "type": "string",
+      "minLength": 1
+    },
+    "subject": {
+      "type": "string",
+      "minLength": 1
+    },
+    "body": {
+      "type": "string"
+    },
+    "reason": {
+      "type": "string",
+      "minLength": 1
+    },
+    "evidence": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "source_type": {
+      "type": "string",
+      "enum": ["human", "agent-suggested", "scrape", "derived"]
+    },
+    "author": {
+      "type": "string",
+      "minLength": 1
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "last_verified_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "status": {
+      "type": "string"
+    },
+    "supersedes": {
+      "type": "string"
+    },
+    "superseded_by": {
+      "type": "string"
+    },
+    "tags": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "severity": {
+      "type": "string",
+      "enum": ["hard", "soft"]
+    },
+    "valid_until": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "decided_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "started_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "ended_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "occurred_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "resolved_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "related_to": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "rejected_alternatives": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": { "kind": { "const": "decision" } },
+        "required": ["kind"]
+      },
+      "then": {
+        "required": ["decided_at"],
+        "properties": {
+          "status": {
+            "enum": ["active", "superseded", "archived"]
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": { "kind": { "const": "constraint" } },
+        "required": ["kind"]
+      },
+      "then": {
+        "properties": {
+          "status": {
+            "enum": ["active", "superseded", "archived"]
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": { "kind": { "const": "experiment" } },
+        "required": ["kind"]
+      },
+      "then": {
+        "required": ["started_at"],
+        "properties": {
+          "status": {
+            "enum": ["in_progress", "succeeded", "failed", "inconclusive", "abandoned"]
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": { "kind": { "const": "incident" } },
+        "required": ["kind"]
+      },
+      "then": {
+        "required": ["occurred_at"],
+        "properties": {
+          "status": {
+            "enum": ["investigating", "mitigated", "resolved"]
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": { "kind": { "const": "signal" } },
+        "required": ["kind"]
+      },
+      "then": {
+        "properties": {
+          "status": {
+            "enum": ["active", "superseded", "archived"]
+          }
+        }
+      }
+    }
+  ]
+}
