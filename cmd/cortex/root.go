@@ -37,6 +37,8 @@ write a record.`,
 		newAddCmd(),
 		newGetCmd(),
 		newListCmd(),
+		newAskCmd(),
+		newContextCmd(),
 	)
 	return cmd
 }
