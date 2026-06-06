@@ -19,3 +19,13 @@ Desktop.ini
 .project
 .classpath
 .settings/
+
+# Go
+bin/
+dist/
+*.test
+*.out
+coverage.txt
+coverage.html
+.cortex/
+
