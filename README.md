@@ -84,10 +84,11 @@ The full principle set lives in [AGENTS.md](AGENTS.md).
 
 ## Status
 
-Early development. There is no installable binary yet. The problems
-the project exists to address are recorded in
+Early development. The v0 CLI surface (add, get, list, validate)
+is in place but no installable binary is published yet. The
+problems the project exists to address are recorded in
 [docs/scope.md](docs/scope.md); the architectural decisions that
-follow from them will be filed in [docs/decisions/](docs/decisions/).
+follow from them live in [docs/decisions/](docs/decisions/).
 
 ## Project layout
 
@@ -100,6 +101,20 @@ follow from them will be filed in [docs/decisions/](docs/decisions/).
 | `docs/scope.md` | The problems Cortex SideMark exists to address; the input to subsequent ADRs. |
 | `docs/decisions/` | Architectural decision records. |
 | `docs/agents/` | Per-host-agent adapter specifications. |
+
+## CLI surface
+
+The `cortex` binary is a read-dominant command. Most calls ask a
+question; a few write a record. The `.cortex/` store is discovered
+by walking upward from the current working directory unless
+`--root` points elsewhere.
+
+| Command | Purpose |
+| --- | --- |
+| `cortex add <file>` | Validate a record file and add it to the store. |
+| `cortex get <id> [--human]` | Fetch a record by id (exact, then prefix). |
+| `cortex list [--kind K] [--limit N] [--json]` | List records, newest first. |
+| `cortex validate <file>... [--json]` | Validate record files against the schema. |
 
 ## Contributing
 
