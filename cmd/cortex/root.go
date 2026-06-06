@@ -1,3 +1,4 @@
+// Package cortex implements the cortex CLI.
 package cortex
 
 import (
@@ -6,10 +7,16 @@ import (
 	"github.com/SincereMa/cortex-sidemark/internal/version"
 )
 
+// Execute runs the root command and returns any error to the
+// caller. main.go handles exit codes; this package stays
+// testable.
 func Execute() error {
 	return newRootCmd().Execute()
 }
 
+// newRootCmd builds the root cobra command. It is the single
+// place where the CLI's identity, flags, and subcommands are
+// wired together.
 func newRootCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     "cortex",
@@ -25,5 +32,6 @@ write a record.`,
 		SilenceErrors: true,
 	}
 	cmd.SetVersionTemplate("cortex {{.Version}} (commit " + version.Commit + ")\n")
+	cmd.AddCommand(newValidateCmd())
 	return cmd
 }

@@ -1,0 +1,16 @@
+{
+  "id": "01HW4F2N8X2JZPM7Q3S5V0K1A1",
+  "kind": "constraint",
+  "scope": "legacy/billing/**",
+  "subject": "Do not modify files under legacy/billing",
+  "reason": "Compliance review pending; expect decision by 2026-09-30",
+  "evidence": ["https://example.com/compliance/REVIEW-42"],
+  "source_type": "human",
+  "author": "bob",
+  "created_at": "2026-04-01T10:00:00Z",
+  "last_verified_at": "2026-05-15T10:00:00Z",
+  "status": "active",
+  "severity": "hard",
+  "valid_until": "2026-09-30T00:00:00Z",
+  "tags": ["compliance"]
+}
