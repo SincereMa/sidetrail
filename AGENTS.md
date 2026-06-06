@@ -52,5 +52,6 @@ The categories of auxiliary memory Cortex SideMark records. New categories need 
 | Path | Purpose |
 | --- | --- |
 | `README.md` | User-facing description and the real install command (once it exists). |
+| `docs/scope.md` | The problems Cortex SideMark exists to address; the input to subsequent ADRs. |
 | `docs/decisions/` | Architectural decision records (ADRs). |
 | `docs/agents/` | Per-host-agent adapter specifications. |

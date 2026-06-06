@@ -1,16 +1,93 @@
 # Cortex SideMark
 
-> A sidecar that adds long-lived auxiliary memory to AI agents.
+> A sidecar that gives AI agents long-lived memory of the projects they work on — without modifying them.
 
-Cortex SideMark is in early development. The mission and non-negotiable
-principles of the project live in [AGENTS.md](./AGENTS.md). Read it before
-contributing or evaluating the project.
+Mainstream agents see the current state of a project. The reasoning
+that produced that state is lost. The constraints that bind the
+project live in the heads of the team, not in the code. The agent
+treats every part of the project as equivalent, when in fact some
+parts are hard to change safely and some are easy. And when the agent
+edits a service, it has no reliable way to see which other services
+depend on what it is about to change.
+
+Cortex SideMark is a sidecar that records this missing context —
+decisions, constraints, health signals, project state — and makes it
+available to the host agent before it acts. It does not touch the
+host agent. It does not replace it. It runs alongside it.
+
+## The five gaps
+
+1. **Reasoning trails for project evolution are lost between sessions.**
+
+   > "This area was adjusted three times. The first attempt changed
+   > X because of Y. The second attempt found a side effect Z and
+   > was rolled back to X. The current state is the result of the
+   > third attempt, chosen specifically to avoid Z."
+
+2. **The blast radius of an edit is invisible across services, modules, and subprojects.**
+
+   The agent can see the file it is changing, but not the services,
+   modules, subprojects, or shared contracts that depend on that
+   file — statically, at runtime, or operationally. Local
+   correctness, global regression.
+
+3. **Project difficulty is uneven and shifts, but the agent has no read on it.**
+
+   Some modules are churn hotspots, some are bug clusters, some
+   have eroding test coverage, some depend on stale libraries. The
+   agent cannot prioritize, warn, slow down, or escalate review
+   where it matters.
+
+4. **Documented architecture drifts from actual architecture.**
+
+   > "The architecture diagram shows service A and service B as
+   > cleanly separated. Service B has, for the last eight months,
+   > been reading service A's primary database directly. Every new
+   > feature in B assumes the read. Removing it is a multi-quarter
+   > project, not a refactor."
+
+5. **Tribal constraints are nowhere the agent can read them.**
+
+   > "Don't change the code in `legacy/billing/` — there's a
+   > compliance review pending."
+   >
+   > "We use library Z despite its license because alternatives have
+   > all been blocked by security."
+   >
+   > "That migration is paused; do not touch the bridge code until
+   > Q3."
+
+The formal definition of each gap — kinds, statuses, sub-cases,
+surface mapping, cross-cutting dimensions — is in
+[docs/scope.md](docs/scope.md). The non-negotiable principles that
+shape how we solve them are in [AGENTS.md](AGENTS.md).
+
+## How it works
+
+Cortex SideMark is a **sidecar**, not a competing agent. It runs
+alongside the host agent (Claude Code, Cursor, Aider, …) and
+records long-lived context. It does not fork, patch, or inject into
+the host.
+
+A few hard constraints shape the design:
+
+- **Non-intrusive.** Observe and record; never edit the host agent.
+- **Lightweight.** No heavy runtime, no bundled LLM calls the user
+  did not request.
+- **Cross-platform and cross-agent.** macOS, Linux, Windows; one
+  binary, one config; adding support for a new host agent is a
+  localized change.
+- **Simple configuration.** Near-zero config to get value;
+  everything else opt-in.
+
+The full principle set lives in [AGENTS.md](AGENTS.md).
 
 ## Status
 
-The project has not shipped a release yet. There is no installable binary
-or package at this time. See [AGENTS.md](./AGENTS.md) for the product
-surface being designed and the open architectural questions.
+Early development. There is no installable binary yet. The problems
+the project exists to address are recorded in
+[docs/scope.md](docs/scope.md); the architectural decisions that
+follow from them will be filed in [docs/decisions/](docs/decisions/).
 
 ## Project layout
 
@@ -20,6 +97,7 @@ surface being designed and the open architectural questions.
 | `LICENSE` | MIT license terms. |
 | `CODE_OF_CONDUCT.md` | Community expectations. |
 | `CONTRIBUTING.md` | How to file issues and submit changes. |
+| `docs/scope.md` | The problems Cortex SideMark exists to address; the input to subsequent ADRs. |
 | `docs/decisions/` | Architectural decision records. |
 | `docs/agents/` | Per-host-agent adapter specifications. |
 
