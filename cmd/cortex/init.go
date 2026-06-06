@@ -81,6 +81,9 @@ func runInit(cmd *cobra.Command, _ []string, opts *initOptions) error {
 	}
 
 	cortexDir := filepath.Join(projectRoot, ".cortex")
+	if err := os.MkdirAll(cortexDir, 0o755); err != nil {
+		return fmt.Errorf("mkdir %q: %w", cortexDir, err)
+	}
 	s := storage.NewStore(cortexDir)
 	now := time.Now().UTC()
 	written := 0
