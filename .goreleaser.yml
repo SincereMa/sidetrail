@@ -1,0 +1,87 @@
+# yaml-language-server: $schema=https://goreleaser.com/static/schema.json
+# GoReleaser config for Cortex SideMark.
+#
+# Cross-platform build matrix: linux, darwin, windows × amd64, arm64.
+# Static binaries (CGO_ENABLED=0) for the simplest possible install.
+# Per-platform archive format: tar.gz for unix, zip for windows.
+# Releases are draft by default so a human can review notes before publish.
+
+version: 2
+
+project_name: cortex
+
+before:
+  hooks:
+    - go mod tidy
+
+builds:
+  - id: cortex
+    main: ./
+    binary: cortex
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+      - darwin
+      - windows
+    goarch:
+      - amd64
+      - arm64
+    mod_timestamp: "{{ .CommitTimestamp }}"
+
+archives:
+  - id: default
+    formats:
+      - tar.gz
+    format_overrides:
+      - goos: windows
+        formats:
+          - zip
+    name_template: >-
+      {{ .ProjectName }}_
+      {{ .Version }}_
+      {{ .Os }}_
+      {{ .Arch }}
+    files:
+      - LICENSE
+      - README.md
+      - src: scripts/install.sh
+        dst: .
+      - src: scripts/install.ps1
+        dst: .
+
+checksum:
+  name_template: "{{ .ProjectName }}_{{ .Version }}_checksums.txt"
+  algorithm: sha256
+
+changelog:
+  use: git
+  sort: asc
+  filters:
+    exclude:
+      - "^docs:"
+      - "^chore:"
+      - "^test:"
+
+release:
+  github:
+    owner: SincereMa
+    name: cortex-sidemark
+  draft: true
+  prerelease: auto
+  header: |
+    ## Cortex SideMark {{ .Tag }}
+
+    See [docs/scope.md](https://github.com/SincereMa/cortex-sidemark/blob/{{ .Tag }}/docs/scope.md) for what this project is solving.
+
+    Install:
+    ```sh
+    curl -fsSL https://raw.githubusercontent.com/SincereMa/cortex-sidemark/{{ .Tag }}/scripts/install.sh | sh
+    ```
+  footer: |
+    ## Verifying
+
+    Each archive has a SHA-256 checksum in `{{ .ProjectName }}_{{ .Version }}_checksums.txt`. Verify with:
+    ```sh
+    sha256sum -c {{ .ProjectName }}_{{ .Version }}_checksums.txt
+    ```
