@@ -156,6 +156,11 @@ it at the file the agent is about to edit, and it returns the
 records the team has filed about that file and its enclosing
 scopes.
 
+Adapter guides for specific host agents live in
+[docs/agents/](docs/agents/). The first is for
+[OpenCode](docs/agents/opencode.md), a model-agnostic coding
+agent.
+
 `cortex init` is the cold-start path. It scans the canonical
 project paths and writes scrape-derived candidate records to
 `.cortex/_seed/`. Skipping init is valid; the sidecar is usable
