@@ -1,7 +1,6 @@
 package cortex
 
 import (
-	"encoding/json"
 	"fmt"
 
 	"github.com/spf13/cobra"
@@ -56,9 +55,9 @@ func runList(cmd *cobra.Command, _ []string, opts *listOptions) error {
 		records = records[:opts.limit]
 	}
 	if opts.jsonO {
-		return emitJSON(cmd, records)
+		return writeRecordsJSON(cmd, records)
 	}
-	emitTable(cmd, records)
+	writeRecordsTable(cmd, records)
 	return nil
 }
 
@@ -76,21 +75,11 @@ func fetchRecords(s *storage.Store, kind string) ([]*record.Record, error) {
 	return s.ListKind(k)
 }
 
-// emitJSON writes the records as a JSON array.
-func emitJSON(cmd *cobra.Command, recs []*record.Record) error {
-	data, err := json.MarshalIndent(recs, "", "  ")
-	if err != nil {
-		return fmt.Errorf("marshal: %w", err)
-	}
-	_, err = cmd.OutOrStdout().Write(append(data, '\n'))
-	return err
-}
-
-// emitTable writes the records as a tab-separated table with a
+// writeRecordsTable writes recs as a tab-separated table with a
 // header. Width is not adjusted; tab characters are the
 // alignment mechanism so agents can parse the columns
-// positionally.
-func emitTable(cmd *cobra.Command, recs []*record.Record) {
+// positionally. Shared by list, ask, and context.
+func writeRecordsTable(cmd *cobra.Command, recs []*record.Record) {
 	out := cmd.OutOrStdout()
 	fmt.Fprintln(out, "ID\tKIND\tSUBJECT\tCREATED_AT")
 	for _, r := range recs {

@@ -304,3 +304,178 @@ func mustWrite(t *testing.T, s *Store, r *record.Record) {
 		t.Fatal(err)
 	}
 }
+
+// TestAskScopeFilter confirms Ask only returns records whose
+// scope matches the pattern.
+func TestAskScopeFilter(t *testing.T) {
+	s := newStore(t)
+	writeAt := func(id, scope string, k record.Kind) {
+		t.Helper()
+		r := &record.Record{
+			ID:             id,
+			Kind:           k,
+			Scope:          scope,
+			Subject:        "s",
+			Reason:         "r",
+			SourceType:     record.SourceHuman,
+			Author:         "tester",
+			CreatedAt:      time.Date(2026, 1, 1, 0, 0, 0, 0, time.UTC),
+			LastVerifiedAt: time.Date(2026, 1, 1, 0, 0, 0, 0, time.UTC),
+			Status:         "active",
+		}
+		mustWrite(t, s, r)
+	}
+	writeAt("01HWAAAAAAAAAAAA0000000001", "src/foo", record.KindDecision)
+	writeAt("01HWAAAAAAAAAAAA0000000002", "src/foo/bar.go", record.KindConstraint)
+	writeAt("01HWAAAAAAAAAAAA0000000003", "src/foobar", record.KindSignal)
+	writeAt("01HWAAAAAAAAAAAA0000000004", "auth", record.KindDecision)
+
+	got, err := s.Ask("src/foo", "", "", 0)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(got) != 2 {
+		t.Errorf("expected 2 matches for src/foo, got %d", len(got))
+	}
+	for _, r := range got {
+		if r.Scope != "src/foo" && r.Scope != "src/foo/bar.go" {
+			t.Errorf("unexpected scope in result: %q", r.Scope)
+		}
+	}
+}
+
+// TestAskKindTagFilter confirms Ask applies kind and tag filters
+// in addition to scope.
+func TestAskKindTagFilter(t *testing.T) {
+	s := newStore(t)
+	withTags := func(id string, tags []string) *record.Record {
+		return &record.Record{
+			ID:             id,
+			Kind:           record.KindDecision,
+			Scope:          "src/foo",
+			Subject:        "s",
+			Reason:         "r",
+			SourceType:     record.SourceHuman,
+			Author:         "tester",
+			CreatedAt:      time.Date(2026, 1, 1, 0, 0, 0, 0, time.UTC),
+			LastVerifiedAt: time.Date(2026, 1, 1, 0, 0, 0, 0, time.UTC),
+			Status:         "active",
+			Tags:           tags,
+		}
+	}
+	mustWrite(t, s, withTags("01HWAAAAAAAAAAAA0000000001", []string{"auth", "billing"}))
+	mustWrite(t, s, withTags("01HWAAAAAAAAAAAA0000000002", []string{"auth"}))
+	mustWrite(t, s, withTags("01HWAAAAAAAAAAAA0000000003", nil))
+
+	got, err := s.Ask("src/foo", "decision", "auth", 0)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(got) != 2 {
+		t.Errorf("expected 2 records with tag auth, got %d", len(got))
+	}
+}
+
+// TestAskLimit confirms Ask caps the result at limit.
+func TestAskLimit(t *testing.T) {
+	s := newStore(t)
+	for i := 0; i < 5; i++ {
+		r := &record.Record{
+			ID:             fmt.Sprintf("01HWAAAAAAAAAAAA000000000%d", i+1),
+			Kind:           record.KindDecision,
+			Scope:          "src/foo",
+			Subject:        "s",
+			Reason:         "r",
+			SourceType:     record.SourceHuman,
+			Author:         "tester",
+			CreatedAt:      time.Date(2026, 1, 1, 0, i, 0, 0, time.UTC),
+			LastVerifiedAt: time.Date(2026, 1, 1, 0, i, 0, 0, time.UTC),
+			Status:         "active",
+		}
+		mustWrite(t, s, r)
+	}
+	got, err := s.Ask("src/foo", "", "", 2)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(got) != 2 {
+		t.Errorf("expected 2, got %d", len(got))
+	}
+}
+
+// TestContextForFile confirms ContextFor returns records whose
+// scope is the file or an ancestor directory.
+func TestContextForFile(t *testing.T) {
+	s := newStore(t)
+	writeAt := func(id, scope string) {
+		t.Helper()
+		r := &record.Record{
+			ID:             id,
+			Kind:           record.KindConstraint,
+			Scope:          scope,
+			Subject:        "s",
+			Reason:         "r",
+			SourceType:     record.SourceHuman,
+			Author:         "tester",
+			CreatedAt:      time.Date(2026, 1, 1, 0, 0, 0, 0, time.UTC),
+			LastVerifiedAt: time.Date(2026, 1, 1, 0, 0, 0, 0, time.UTC),
+			Status:         "active",
+		}
+		mustWrite(t, s, r)
+	}
+	writeAt("01HWAAAAAAAAAAAA0000000001", "src/foo/bar/baz.go")
+	writeAt("01HWAAAAAAAAAAAA0000000002", "src/foo/bar")
+	writeAt("01HWAAAAAAAAAAAA0000000003", "src/foo")
+	writeAt("01HWAAAAAAAAAAAA0000000004", "src/other")
+	writeAt("01HWAAAAAAAAAAAA0000000005", "auth")
+
+	got, err := s.ContextFor("src/foo/bar/baz.go", 0, 0)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(got) != 3 {
+		t.Errorf("expected 3 records (file + 2 ancestors), got %d", len(got))
+	}
+}
+
+// TestContextForRadius confirms radius caps the ancestor walk.
+func TestContextForRadius(t *testing.T) {
+	s := newStore(t)
+	writeAt := func(id, scope string) {
+		t.Helper()
+		r := &record.Record{
+			ID:             id,
+			Kind:           record.KindConstraint,
+			Scope:          scope,
+			Subject:        "s",
+			Reason:         "r",
+			SourceType:     record.SourceHuman,
+			Author:         "tester",
+			CreatedAt:      time.Date(2026, 1, 1, 0, 0, 0, 0, time.UTC),
+			LastVerifiedAt: time.Date(2026, 1, 1, 0, 0, 0, 0, time.UTC),
+			Status:         "active",
+		}
+		mustWrite(t, s, r)
+	}
+	writeAt("01HWAAAAAAAAAAAA0000000001", "src/foo/bar/baz.go")
+	writeAt("01HWAAAAAAAAAAAA0000000002", "src/foo/bar")
+	writeAt("01HWAAAAAAAAAAAA0000000003", "src/foo")
+
+	got, err := s.ContextFor("src/foo/bar/baz.go", 1, 0)
+	if err != nil {
+		t.Fatal(err)
+	}
+	// radius=1: file + immediate parent only. 2 records.
+	if len(got) != 2 {
+		t.Errorf("expected 2 records with radius=1, got %d", len(got))
+	}
+}
+
+// TestContextForEmptyFile confirms ContextFor rejects an empty
+// file argument.
+func TestContextForEmptyFile(t *testing.T) {
+	s := newStore(t)
+	if _, err := s.ContextFor("", 0, 0); err == nil {
+		t.Fatal("expected error for empty file, got nil")
+	}
+}

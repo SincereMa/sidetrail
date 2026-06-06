@@ -114,7 +114,14 @@ by walking upward from the current working directory unless
 | `cortex add <file>` | Validate a record file and add it to the store. |
 | `cortex get <id> [--human]` | Fetch a record by id (exact, then prefix). |
 | `cortex list [--kind K] [--limit N] [--json]` | List records, newest first. |
+| `cortex ask --scope <s> [--kind] [--tag] [--limit] [--json]` | Query records whose scope matches a pattern. |
+| `cortex context --file <path> [--radius N] [--limit] [--json]` | Aggregate records relevant to a file path. |
 | `cortex validate <file>... [--json]` | Validate record files against the schema. |
+
+The first host-agent integration point is `cortex context`: point
+it at the file the agent is about to edit, and it returns the
+records the team has filed about that file and its enclosing
+scopes.
 
 ## Contributing
 
