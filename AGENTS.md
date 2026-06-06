@@ -1,57 +1,92 @@
 # AGENTS.md — Cortex SideMark
 
-> A sidecar tool that adds long-lived auxiliary memory to mainstream AI agents — without modifying them.
+Mission and pitch: [README.md](./README.md). This file is the
+"don't miss this" guide for AI agents working in the repo.
 
-## Mission
+## Status
 
-Cortex SideMark is an **auxiliary / sidecar tool** for mainstream AI agents. It runs *alongside* an existing host agent (e.g. Claude Code, Cursor, Aider) and adds long-lived memory — decisions, constraints, health signals, project context — without forking, patching, or injecting into the host.
+- **Greenfield.** No source, no build, no tests, no CI. The first
+  PR establishes the layout — do not scaffold a large tree
+  speculatively.
+- **Undecided stack.** Language, framework, storage, IPC, and
+  host-agent target are not chosen. When chosen, record as ADRs
+  in [docs/decisions/](./decisions/).
 
-The word *side* is load-bearing. Cortex SideMark is an **addition**, never a replacement.
+## Hard constraints (non-negotiable)
 
-## Non-negotiable principles
+These are not aspirational. A change that violates them is a
+regression. If a task asks for one, stop, surface the conflict,
+and wait for explicit confirmation.
 
-These are hard constraints, not aspirations. Any change that violates them is a regression.
+- **Non-intrusive.** Observe and record; never edit the host
+  agent. Redesign any feature that requires touching the host.
+- **Sidecar, not replacement.** Never position, document, or
+  architect this as a competing agent.
+- **Lightweight.** No heavy runtime, no bundled LLM calls the
+  user did not request, no surprise transitive dependencies.
+- **Simple config.** Near-zero config to get value; everything
+  else opt-in.
+- **Cross-platform.** macOS, Linux, Windows. No platform-specific
+  paths, syscalls, or shell calls without an abstraction layer.
+- **Cross-agent.** Adapters for multiple host agents are first-
+  class; adding support for a new agent is a localized change.
+- **Standard install.** Single binary on `PATH` or a well-known
+  package manager command. No bespoke installer.
+- **English-only content.** Documentation, code, comments, and
+  resource files are in English. The only exception is user-
+  supplied text intentionally in another language. No mixed-
+  language commits.
 
-### Architectural
+## Scope and product surface
 
-- **Non-intrusive.** Observe and record; never edit the host agent. If a feature can only be done by touching the host, redesign the feature.
-- **Sidecar, not replacement.** Never positioned, documented, or architected as a competing agent.
-- **Lightweight.** No heavy runtime, no bundled LLM calls the user did not request, no surprise transitive dependencies. "Doesn't overpower" is the bar.
-- **Simple configuration.** Near-zero config to get value; sensible defaults; everything else opt-in.
-- **Cross-platform.** macOS, Linux, Windows. No platform-specific paths, syscalls, or shell calls without an abstraction layer.
-- **Cross-agent.** Adapters for multiple host agents are first-class. Adding support for a new agent is a localized change, not a rewrite.
-- **Standard install.** Single binary on `PATH` or a well-known package manager command. No bespoke installer.
+The project exists to address the five problems in
+[docs/scope.md](./scope.md). A feature that does not address at
+least one of them is out of scope.
 
-### Process
+Auxiliary memory is recorded in three categories. A new category
+needs a concrete use case, not just an idea.
 
-- **English-only content.** Documentation, code, comments, and resource files are written in English. The only exception is user-supplied text intentionally in another language (e.g. a quoted message or a manually entered translation). No mixed-language commits.
-- **Protect the mission.** The principles in this file are the source of truth. If a proposed change, refactor, or task could conflict with the mission — in any way, however minor — the agent must stop, surface the conflict in detail (what the change does, which principle it touches, and why it is at risk), and wait for explicit developer confirmation before proceeding.
+- **Decisions** — choices the user has made, with reasoning.
+- **Boundaries / constraints** — explicit *do not do* rules or
+  hard limits.
+- **Health data** — project health signals an agent can pull
+  before acting.
 
-## Product surface
+## Workflow
 
-The categories of auxiliary memory Cortex SideMark records. New categories need a concrete use case, not just an idea.
-
-- **Decisions** — choices the user has made, with reasoning, so future sessions do not re-litigate them.
-- **Boundaries / constraints** — explicit *do not do* rules or hard limits on a project.
-- **Health data** — project health signals (test status, lint status, stale files, etc.) that a host agent can pull before acting.
-
-## Repository status
-
-- **Greenfield.** Source is intentionally absent. The first PR establishes the layout — do not scaffold a large tree speculatively.
-- **Undecided.** Language, framework, storage backend, and IPC mechanism are not set yet. Record such decisions as ADRs in `docs/decisions/` (create the directory on the first decision).
-- **Adapter designs.** Per-host-agent adapter specifications go under `docs/agents/` (create when the first adapter is designed).
-
-## Workflow conventions
-
-- **Do not invent install steps.** Until install is implemented, link to the actual command in `README.md` or a script. Never write instructions that do not run.
-- **Do not document features that do not exist.** If a markdown file claims a capability, the code in this repo must run it.
-- **Update this file when the picture changes.** New agent adapter, refined principle, or major decision (language, storage, IPC) — reflect it here.
+- **Commits.** English, imperative mood, 50-character subject
+  ("Add X", not "Added X"). Conventional-commit prefix is
+  encouraged (`docs:`, `feat:`, `fix:`, `chore:`, `refactor:`,
+  `test:`).
+- **Branches.** Short-lived, off `main`: `feat/<topic>`,
+  `fix/<topic>`, `docs/<topic>`, `chore/<topic>`. One logical
+  change per PR.
+- **PRs.** Squash-merge default. The PR title becomes the
+  squashed commit subject, so make it descriptive. The PR
+  template has a checkbox confirming AGENTS.md principles are
+  not violated — do not tick without genuinely checking.
+- **Architectural decisions.** A change that picks a language,
+  framework, storage, IPC, or host-agent adapter must add or
+  update an ADR in [docs/decisions/](./decisions/) and link it
+  from the PR.
+- **Do not document features that do not exist.** A markdown
+  claim must be backed by code that runs.
+- **Do not invent install steps.** Until install is implemented,
+  link to the actual command in `README.md` or a script. Never
+  write instructions that do not run.
 
 ## Pointers
 
 | Path | Purpose |
 | --- | --- |
-| `README.md` | User-facing description and the real install command (once it exists). |
-| `docs/scope.md` | The problems Cortex SideMark exists to address; the input to subsequent ADRs. |
-| `docs/decisions/` | Architectural decision records (ADRs). |
+| `README.md` | Project pitch; the real install command (once one exists). |
+| `docs/scope.md` | The five problems this project addresses; input to ADRs. |
+| `docs/decisions/` | Architectural decision records. |
 | `docs/agents/` | Per-host-agent adapter specifications. |
+| `CONTRIBUTING.md` | How to file issues and submit changes. |
+| `.github/ISSUE_TEMPLATE/` | Bug report and feature request templates. |
+| `.github/PULL_REQUEST_TEMPLATE.md` | PR template; includes the AGENTS.md compliance checkbox. |
+
+Update this file when the picture changes: a new agent adapter
+appears, a principle is refined, a major decision is made, or the
+project leaves greenfield.
