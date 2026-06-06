@@ -1,0 +1,39 @@
+name: Feature request
+description: Propose a new capability or change.
+title: "[feature]: "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Before opening a feature request, please read AGENTS.md to confirm
+        the proposal fits the project's mission and non-negotiable
+        principles.
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What problem does this solve? Why now?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+      description: How would you like the change to work?
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: What other approaches did you weigh?
+    validations:
+      required: false
+  - type: textarea
+    id: principles
+    attributes:
+      label: Principle alignment
+      description: How does this respect the non-negotiable principles in AGENTS.md?
+    validations:
+      required: true

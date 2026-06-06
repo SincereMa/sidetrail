@@ -1,0 +1,49 @@
+name: Bug report
+description: Report something that is broken or behaves incorrectly.
+title: "[bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for filing a bug. Please fill in the sections below.
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      description: What happened? One or two sentences.
+      placeholder: "The command X produced Y instead of Z."
+    validations:
+      required: true
+  - type: textarea
+    id: repro
+    attributes:
+      label: Reproduction
+      description: Minimal steps to reproduce the behavior.
+      placeholder: |
+        1. ...
+        2. ...
+        3. ...
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+      description: What did you expect to happen?
+    validations:
+      required: true
+  - type: textarea
+    id: env
+    attributes:
+      label: Environment
+      description: Operating system, host agent, version (if known).
+    validations:
+      required: false
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional context
+      description: Logs, screenshots, links, or anything else.
+    validations:
+      required: false
