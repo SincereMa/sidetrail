@@ -1,5 +1,5 @@
-// Package cortex is the test surface for the add subcommand.
-package cortex
+// Package sidetrail is the test surface for the add subcommand.
+package sidetrail
 
 import (
 	"bytes"
@@ -11,7 +11,7 @@ import (
 
 // validAddRecord is the JSON for a complete, schema-valid
 // decision record. It is written to a temp file by the tests
-// and fed to `cortex add`.
+// and fed to `sidetrail add`.
 const validAddRecord = `{
   "id": "01HW4F2N8X2JZPM7Q3S5V0K1A1",
   "kind": "decision",
@@ -26,13 +26,13 @@ const validAddRecord = `{
   "decided_at": "2026-01-01T00:00:00Z"
 }`
 
-// setupAddStore creates a temp directory tree with a .cortex/
+// setupAddStore creates a temp directory tree with a .sidetrail/
 // inside it, plus a record file at the leaf. It returns the
-// .cortex/ path and the record file path.
+// .sidetrail/ path and the record file path.
 func setupAddStore(t *testing.T) (cortexDir, recordFile string) {
 	t.Helper()
 	root := t.TempDir()
-	cortexDir = filepath.Join(root, ".cortex")
+	cortexDir = filepath.Join(root, storeDirName)
 	if err := os.MkdirAll(cortexDir, 0o755); err != nil {
 		t.Fatal(err)
 	}
@@ -44,7 +44,7 @@ func setupAddStore(t *testing.T) (cortexDir, recordFile string) {
 }
 
 // TestAddOK confirms a valid record file is written under the
-// .cortex/ root and the id is reported on stdout.
+// .sidetrail/ root and the id is reported on stdout.
 func TestAddOK(t *testing.T) {
 	cortexDir, recordFile := setupAddStore(t)
 

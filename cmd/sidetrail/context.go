@@ -1,11 +1,11 @@
-package cortex
+package sidetrail
 
 import (
 	"fmt"
 
 	"github.com/spf13/cobra"
 
-	"github.com/SincereMa/cortex-sidemark/internal/storage"
+	"github.com/SincereMa/sidetrail/internal/storage"
 )
 
 // contextOptions carries the flags for the `context` command.
@@ -17,7 +17,7 @@ type contextOptions struct {
 	jsonO  bool
 }
 
-// newContextCmd builds the `cortex context` subcommand. It is
+// newContextCmd builds the `sidetrail context` subcommand. It is
 // the file-scoped aggregate the host agent calls before
 // editing: "what do I know about this file and the directories
 // above it?" The host agent points at the file; the sidecar
@@ -32,7 +32,7 @@ func newContextCmd() *cobra.Command {
 			return runContext(cmd, args, opts)
 		},
 	}
-	cmd.Flags().StringVar(&opts.root, "root", "", "explicit path to a .cortex/ directory (default: search upward from CWD)")
+	cmd.Flags().StringVar(&opts.root, "root", "", "explicit path to a .sidetrail/ directory (default: search upward from CWD)")
 	cmd.Flags().StringVar(&opts.file, "file", "", "file path whose context to gather (required)")
 	cmd.Flags().IntVar(&opts.radius, "radius", 0, "ancestor levels to include (0 = walk to root, N>0 = walk N levels)")
 	cmd.Flags().IntVar(&opts.limit, "limit", 50, "maximum number of records to return")

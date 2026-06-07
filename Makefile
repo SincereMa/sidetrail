@@ -1,9 +1,9 @@
-BINARY := cortex
+BINARY := sidetrail
 PKG := ./...
 VERSION ?= $(shell git describe --tags --always --dirty 2>/dev/null || echo dev)
 COMMIT ?= $(shell git rev-parse --short HEAD 2>/dev/null || echo none)
-LDFLAGS := -X github.com/SincereMa/cortex-sidemark/internal/version.Version=$(VERSION) \
-           -X github.com/SincereMa/cortex-sidemark/internal/version.Commit=$(COMMIT)
+LDFLAGS := -X github.com/SincereMa/sidetrail/internal/version.Version=$(VERSION) \
+           -X github.com/SincereMa/sidetrail/internal/version.Commit=$(COMMIT)
 
 .PHONY: all build test lint tidy run clean release-snapshot release-install release-install-windows
 
@@ -29,10 +29,10 @@ run: build
 release-snapshot:
 	goreleaser release --snapshot --clean --skip=publish
 
-# Bootstraps a local cortex install from a snapshot build. Useful for
+# Bootstraps a local sidetrail install from a snapshot build. Useful for
 # smoke-testing the install script against artifacts in ./dist/.
 release-install: release-snapshot
-	CORTEX_VERSION=v0.0.0-dev ./scripts/install.sh --dir ./bin
+	SIDETRAIL_VERSION=v0.0.0-dev ./scripts/install.sh --dir ./bin
 
 # Syntax-check the install scripts without running them. CI runs both
 # checks; locally, this is the cheap gate before pushing the PR.

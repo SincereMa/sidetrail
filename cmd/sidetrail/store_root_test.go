@@ -1,5 +1,5 @@
-// Package cortex is the test surface for findStoreRoot.
-package cortex
+// Package sidetrail is the test surface for findStoreRoot.
+package sidetrail
 
 import (
 	"os"
@@ -7,12 +7,13 @@ import (
 	"testing"
 )
 
-// TestFindStoreRootHit confirms findStoreRoot returns the nearest
-// .cortex/ when one exists at or above the start path.
+// TestFindStoreRootHit confirms findStoreRoot returns the
+// nearest .sidetrail/ when one exists at or above the start
+// path.
 func TestFindStoreRootHit(t *testing.T) {
 	root := t.TempDir()
-	cortexDir := filepath.Join(root, ".cortex")
-	if err := os.MkdirAll(cortexDir, 0o755); err != nil {
+	storeDir := filepath.Join(root, storeDirName)
+	if err := os.MkdirAll(storeDir, 0o755); err != nil {
 		t.Fatal(err)
 	}
 	nested := filepath.Join(root, "src", "foo", "bar")
@@ -24,7 +25,7 @@ func TestFindStoreRootHit(t *testing.T) {
 		t.Fatal(err)
 	}
 	// Resolve symlinks on macOS where t.TempDir() is under /var.
-	want, _ := filepath.EvalSymlinks(cortexDir)
+	want, _ := filepath.EvalSymlinks(storeDir)
 	gotResolved, _ := filepath.EvalSymlinks(got)
 	if gotResolved != want {
 		t.Errorf("findStoreRoot = %q, want %q", got, want)
@@ -32,16 +33,16 @@ func TestFindStoreRootHit(t *testing.T) {
 }
 
 // TestFindStoreRootMiss confirms findStoreRoot errors when no
-// .cortex/ exists at or above the start path. It is hard to
+// .sidetrail/ exists at or above the start path. It is hard to
 // make this test deterministic on a real filesystem (the walk
 // goes all the way to "/", and some user directory above the
-// temp dir could legitimately contain a .cortex/), so the
+// temp dir could legitimately contain a .sidetrail/), so the
 // assertion is: either the function returns an error, or it
 // returns a path inside the temp dir. The unhappy path is
 // covered by inspection.
 func TestFindStoreRootMiss(t *testing.T) {
 	empty := t.TempDir()
-	leaf := filepath.Join(empty, "no-cortex-here")
+	leaf := filepath.Join(empty, "no-sidetrail-here")
 	if err := os.MkdirAll(leaf, 0o755); err != nil {
 		t.Fatal(err)
 	}
@@ -49,7 +50,7 @@ func TestFindStoreRootMiss(t *testing.T) {
 	if err != nil {
 		return
 	}
-	// If the walk did find something, it must be the .cortex
+	// If the walk did find something, it must be the store dir
 	// inside our temp dir, not a stray one in the real world.
 	if _, relErr := filepath.Rel(empty, got); relErr != nil {
 		t.Errorf("findStoreRoot returned %q, which is outside the test temp dir", got)

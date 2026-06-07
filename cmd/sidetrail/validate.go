@@ -1,4 +1,4 @@
-package cortex
+package sidetrail
 
 import (
 	"encoding/json"
@@ -7,7 +7,7 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/SincereMa/cortex-sidemark/internal/schema"
+	"github.com/SincereMa/sidetrail/internal/schema"
 )
 
 // validateOptions carries the flags for the `validate` command.
@@ -15,7 +15,7 @@ type validateOptions struct {
 	jsonOutput bool
 }
 
-// newValidateCmd builds the `cortex validate` subcommand. It
+// newValidateCmd builds the `sidetrail validate` subcommand. It
 // reports each file's outcome on its own line (or in a JSON array
 // with --json) and exits non-zero if any file fails.
 func newValidateCmd() *cobra.Command {

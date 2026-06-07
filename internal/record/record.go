@@ -1,5 +1,5 @@
 // Package record defines the canonical in-memory and on-disk shape
-// of a Cortex SideMark record, plus helpers for ID and slug
+// of a SideTrail record, plus helpers for ID and slug
 // generation.
 package record
 
@@ -71,7 +71,7 @@ func (s Severity) Valid() bool {
 }
 
 // Record is the canonical in-memory shape of one entry in
-// .cortex/. It is the union of all kind-specific fields defined
+// .sidetrail/. It is the union of all kind-specific fields defined
 // in ADR-0001, ADR-0002, and ADR-0004; only the fields relevant
 // to a record's kind are populated.
 //

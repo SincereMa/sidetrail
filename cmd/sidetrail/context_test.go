@@ -1,5 +1,5 @@
-// Package cortex is the test surface for the context subcommand.
-package cortex
+// Package sidetrail is the test surface for the context subcommand.
+package sidetrail
 
 import (
 	"bytes"
@@ -10,15 +10,15 @@ import (
 	"testing"
 	"time"
 
-	"github.com/SincereMa/cortex-sidemark/internal/record"
-	"github.com/SincereMa/cortex-sidemark/internal/storage"
+	"github.com/SincereMa/sidetrail/internal/record"
+	"github.com/SincereMa/sidetrail/internal/storage"
 )
 
 // seedContextFixture writes records at three depths of the file
 // tree plus a couple of unrelated scopes.
 func seedContextFixture(t *testing.T) string {
 	t.Helper()
-	dir := filepath.Join(t.TempDir(), ".cortex")
+	dir := filepath.Join(t.TempDir(), storeDirName)
 	if err := os.MkdirAll(dir, 0o755); err != nil {
 		t.Fatal(err)
 	}
@@ -51,7 +51,7 @@ func seedContextFixture(t *testing.T) string {
 	return dir
 }
 
-// TestContextForFile confirms `cortex context --file <path>`
+// TestContextForFile confirms `sidetrail context --file <path>`
 // returns records whose scope is the file or an ancestor.
 func TestContextForFile(t *testing.T) {
 	dir := seedContextFixture(t)

@@ -1,4 +1,4 @@
-package cortex
+package sidetrail
 
 import (
 	"fmt"
@@ -6,7 +6,7 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/SincereMa/cortex-sidemark/internal/storage"
+	"github.com/SincereMa/sidetrail/internal/storage"
 )
 
 // verifyOptions carries the flags for the `verify` command.
@@ -14,7 +14,7 @@ type verifyOptions struct {
 	root string
 }
 
-// newVerifyCmd builds the `cortex verify` subcommand. It is
+// newVerifyCmd builds the `sidetrail verify` subcommand. It is
 // the freshness-renewal primitive: a human (or an opt-in
 // scrape) marks a record as still-true, and the sidecar stamps
 // `last_verified_at` to the current time and writes the record
@@ -31,7 +31,7 @@ func newVerifyCmd() *cobra.Command {
 			return runVerify(cmd, args, opts)
 		},
 	}
-	cmd.Flags().StringVar(&opts.root, "root", "", "explicit path to a .cortex/ directory (default: search upward from CWD)")
+	cmd.Flags().StringVar(&opts.root, "root", "", "explicit path to a .sidetrail/ directory (default: search upward from CWD)")
 	return cmd
 }
 

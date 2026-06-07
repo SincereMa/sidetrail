@@ -1,5 +1,5 @@
-// Package cortex is the test surface for the ask subcommand.
-package cortex
+// Package sidetrail is the test surface for the ask subcommand.
+package sidetrail
 
 import (
 	"bytes"
@@ -10,15 +10,15 @@ import (
 	"testing"
 	"time"
 
-	"github.com/SincereMa/cortex-sidemark/internal/record"
-	"github.com/SincereMa/cortex-sidemark/internal/storage"
+	"github.com/SincereMa/sidetrail/internal/record"
+	"github.com/SincereMa/sidetrail/internal/storage"
 )
 
 // seedAskFixture writes a small mixed-scope set of records to
 // the store and returns the store directory.
 func seedAskFixture(t *testing.T) string {
 	t.Helper()
-	dir := filepath.Join(t.TempDir(), ".cortex")
+	dir := filepath.Join(t.TempDir(), storeDirName)
 	if err := os.MkdirAll(dir, 0o755); err != nil {
 		t.Fatal(err)
 	}
@@ -53,7 +53,7 @@ func seedAskFixture(t *testing.T) string {
 	return dir
 }
 
-// TestAskScopePattern confirms `cortex ask --scope src/foo`
+// TestAskScopePattern confirms `sidetrail ask --scope src/foo`
 // returns records whose scope matches by exact or strict
 // descendant.
 func TestAskScopePattern(t *testing.T) {

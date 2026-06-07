@@ -1,4 +1,4 @@
-# Cortex SideMark
+# SideTrail
 
 > A sidecar that gives AI agents long-lived memory of the projects they work on — without modifying them.
 
@@ -10,7 +10,7 @@ parts are hard to change safely and some are easy. And when the agent
 edits a service, it has no reliable way to see which other services
 depend on what it is about to change.
 
-Cortex SideMark is a sidecar that records this missing context —
+SideTrail is a sidecar that records this missing context —
 decisions, constraints, health signals, project state — and makes it
 available to the host agent before it acts. It does not touch the
 host agent. It does not replace it. It runs alongside it.
@@ -64,7 +64,7 @@ shape how we solve them are in [AGENTS.md](AGENTS.md).
 
 ## How it works
 
-Cortex SideMark is a **sidecar**, not a competing agent. It runs
+SideTrail is a **sidecar**, not a competing agent. It runs
 alongside the host agent (Claude Code, Cursor, Aider, …) and
 records long-lived context. It does not fork, patch, or inject into
 the host.
@@ -94,16 +94,16 @@ architectural decisions that follow from them live in
 
 The fastest path is a one-liner. It downloads the latest release
 for your OS and architecture, verifies the SHA-256, and drops the
-`cortex` binary on disk.
+ `sidetrail` binary on disk.
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/SincereMa/cortex-sidemark/main/scripts/install.sh | sh
+curl -fsSL https://raw.githubusercontent.com/SincereMa/sidetrail/main/scripts/install.sh | sh
 ```
 
 On Windows, from PowerShell:
 
 ```powershell
-iwr https://raw.githubusercontent.com/SincereMa/cortex-sidemark/main/scripts/install.ps1 -useb | iex
+iwr https://raw.githubusercontent.com/SincereMa/sidetrail/main/scripts/install.ps1 -useb | iex
 ```
 
 Both scripts accept flags. See `scripts/install.sh --help` or
@@ -116,9 +116,9 @@ For a pinned version, set `CORTEX_VERSION=v0.1.0` (or pass
 `CORTEX_INSTALL_DIR` (or pass `--dir` / `-InstallDir`).
 
 If you prefer to install manually, download a release archive from
-the [GitHub releases page](https://github.com/SincereMa/cortex-sidemark/releases),
+the [GitHub releases page](https://github.com/SincereMa/sidetrail/releases),
 verify it against the matching `*_checksums.txt`, and place the
-`cortex` binary anywhere on `PATH`.
+ `sidetrail` binary anywhere on `PATH`.
 
 ## Project layout
 
@@ -128,30 +128,30 @@ verify it against the matching `*_checksums.txt`, and place the
 | `LICENSE` | MIT license terms. |
 | `CODE_OF_CONDUCT.md` | Community expectations. |
 | `CONTRIBUTING.md` | How to file issues and submit changes. |
-| `docs/scope.md` | The problems Cortex SideMark exists to address; the input to subsequent ADRs. |
+| `docs/scope.md` | The problems SideTrail exists to address; the input to subsequent ADRs. |
 | `docs/decisions/` | Architectural decision records. |
 | `docs/agents/` | Per-host-agent adapter specifications. |
 
 ## CLI surface
 
-The `cortex` binary is a read-dominant command. Most calls ask a
-question; a few write a record. The `.cortex/` store is discovered
+The  `sidetrail` binary is a read-dominant command. Most calls ask a
+question; a few write a record. The `.sidetrail/` store is discovered
 by walking upward from the current working directory unless
 `--root` points elsewhere.
 
 | Command | Purpose |
 | --- | --- |
-| `cortex add <file>` | Validate a record file and add it to the store. |
-| `cortex get <id> [--human]` | Fetch a record by id (exact, then prefix). |
-| `cortex list [--kind K] [--limit N] [--json]` | List records, newest first. |
-| `cortex ask --scope <s> [--kind] [--tag] [--limit] [--json]` | Query records whose scope matches a pattern. |
-| `cortex context --file <path> [--radius N] [--limit] [--json]` | Aggregate records relevant to a file path. |
-| `cortex verify <id>` | Refresh a record's `last_verified_at`. |
-| `cortex supersede <old-id> --new <file>` | Mark a record superseded and add a replacement. |
-| `cortex init [--root <project>] [--no-write]` | Seed a `.cortex/` store from existing project docs. |
-| `cortex validate <file>... [--json]` | Validate record files against the schema. |
+| `sidetrail add <file>` | Validate a record file and add it to the store. |
+| `sidetrail get <id> [--human]` | Fetch a record by id (exact, then prefix). |
+| `sidetrail list [--kind K] [--limit N] [--json]` | List records, newest first. |
+| `sidetrail ask --scope <s> [--kind] [--tag] [--limit] [--json]` | Query records whose scope matches a pattern. |
+| `sidetrail context --file <path> [--radius N] [--limit] [--json]` | Aggregate records relevant to a file path. |
+| `sidetrail verify <id>` | Refresh a record's `last_verified_at`. |
+| `sidetrail supersede <old-id> --new <file>` | Mark a record superseded and add a replacement. |
+| `sidetrail init [--root <project>] [--no-write]` | Seed a `.sidetrail/` store from existing project docs. |
+| `sidetrail validate <file>... [--json]` | Validate record files against the schema. |
 
-The first host-agent integration point is `cortex context`: point
+The first host-agent integration point is `sidetrail context`: point
 it at the file the agent is about to edit, and it returns the
 records the team has filed about that file and its enclosing
 scopes.
@@ -161,9 +161,9 @@ Adapter guides for specific host agents live in
 [OpenCode](docs/agents/opencode.md), a model-agnostic coding
 agent.
 
-`cortex init` is the cold-start path. It scans the canonical
+`sidetrail init` is the cold-start path. It scans the canonical
 project paths and writes scrape-derived candidate records to
-`.cortex/_seed/`. Skipping init is valid; the sidecar is usable
+`.sidetrail/_seed/`. Skipping init is valid; the sidecar is usable
 from empty.
 
 ## Contributing
@@ -174,4 +174,4 @@ Issues and pull requests are welcome. Please read
 
 ## License
 
-[MIT](./LICENSE). Copyright (c) 2026 Cortex SideMark Authors.
+[MIT](./LICENSE). Copyright (c) 2026 SideTrail Authors.

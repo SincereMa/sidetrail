@@ -1,5 +1,5 @@
 # yaml-language-server: $schema=https://goreleaser.com/static/schema.json
-# GoReleaser config for Cortex SideMark.
+# GoReleaser config for SideTrail.
 #
 # Cross-platform build matrix: linux, darwin, windows × amd64, arm64.
 # Static binaries (CGO_ENABLED=0) for the simplest possible install.
@@ -8,16 +8,16 @@
 
 version: 2
 
-project_name: cortex
+project_name: sidetrail
 
 before:
   hooks:
     - go mod tidy
 
 builds:
-  - id: cortex
+  - id: sidetrail
     main: ./
-    binary: cortex
+    binary: sidetrail
     env:
       - CGO_ENABLED=0
     goos:
@@ -66,17 +66,17 @@ changelog:
 release:
   github:
     owner: SincereMa
-    name: cortex-sidemark
+    name: sidetrail
   draft: true
   prerelease: auto
   header: |
-    ## Cortex SideMark {{ .Tag }}
+    ## SideTrail {{ .Tag }}
 
-    See [docs/scope.md](https://github.com/SincereMa/cortex-sidemark/blob/{{ .Tag }}/docs/scope.md) for what this project is solving.
+    See [docs/scope.md](https://github.com/SincereMa/sidetrail/blob/{{ .Tag }}/docs/scope.md) for what this project is solving.
 
     Install:
     ```sh
-    curl -fsSL https://raw.githubusercontent.com/SincereMa/cortex-sidemark/{{ .Tag }}/scripts/install.sh | sh
+    curl -fsSL https://raw.githubusercontent.com/SincereMa/sidetrail/{{ .Tag }}/scripts/install.sh | sh
     ```
   footer: |
     ## Verifying

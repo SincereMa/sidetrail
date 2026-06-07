@@ -1,4 +1,4 @@
-# Install the cortex CLI binary.
+# Install the sidetrail CLI binary.
 #
 # Usage:
 #   .\install.ps1                          # install latest to $HOME\bin
@@ -7,9 +7,9 @@
 #   .\install.ps1 -Repo owner/name         # install from a fork
 #
 # Environment variables (overridden by parameters):
-#   CORTEX_VERSION                          # Same as -Version
-#   CORTEX_INSTALL_DIR                      # Same as -InstallDir
-#   CORTEX_REPO                             # Same as -Repo
+#   SIDETRAIL_VERSION                       # Same as -Version
+#   SIDETRAIL_INSTALL_DIR                   # Same as -InstallDir
+#   SIDETRAIL_REPO                          # Same as -Repo
 #
 # Requires PowerShell 5+ (Windows) or PowerShell Core 7+ (cross-platform).
 
@@ -22,18 +22,18 @@ param(
 
 $ErrorActionPreference = 'Stop'
 
-if (-not $Version)    { $Version    = $env:CORTEX_VERSION }
-if (-not $InstallDir) { $InstallDir = $env:CORTEX_INSTALL_DIR }
-if (-not $Repo)       { $Repo       = $env:CORTEX_REPO }
+if (-not $Version)    { $Version    = $env:SIDETRAIL_VERSION }
+if (-not $InstallDir) { $InstallDir = $env:SIDETRAIL_INSTALL_DIR }
+if (-not $Repo)       { $Repo       = $env:SIDETRAIL_REPO }
 
-if (-not $Repo)       { $Repo = 'SincereMa/cortex-sidemark' }
+if (-not $Repo)       { $Repo = 'SincereMa/sidetrail' }
 if (-not $Version)    { $Version = 'latest' }
 if (-not $InstallDir) {
   if ($env:USERPROFILE) { $InstallDir = Join-Path $env:USERPROFILE 'bin' }
   else                  { $InstallDir = Join-Path $env:HOME       '.local/bin' }
 }
 
-$Project = 'cortex'
+$Project = 'sidetrail'
 $IsWindows = ($IsWindows -or ($PSVersionTable.PSVersion.Major -lt 6 -and [System.Environment]::OSVersion.Platform -eq 'Win32NT'))
 
 function Resolve-Latest {
@@ -92,7 +92,7 @@ $BaseUrl   = "https://github.com/$Repo/releases/download/$Version"
 $ArcUrl    = "$BaseUrl/$ArcName"
 $CheckUrl  = "$BaseUrl/${Project}_${VerBare}_checksums.txt"
 
-$Work = Join-Path ([System.IO.Path]::GetTempPath()) ("cortex-install-" + [System.Guid]::NewGuid().ToString('N'))
+$Work = Join-Path ([System.IO.Path]::GetTempPath()) ("sidetrail-install-" + [System.Guid]::NewGuid().ToString('N'))
 New-Item -ItemType Directory -Path $Work | Out-Null
 
 try {
@@ -127,7 +127,7 @@ try {
   Copy-Item -Path (Join-Path $ExtractDir $Project) -Destination (Join-Path $InstallDir $Project) -Force
 
   Write-Host ""
-  Write-Host "cortex installed at: $InstallDir/$Project"
+  Write-Host "sidetrail installed at: $InstallDir/$Project"
   & (Join-Path $InstallDir $Project) --version
   Write-Host ""
   $pathDirs = ($env:PATH -split [System.IO.Path]::PathSeparator)

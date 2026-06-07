@@ -1,4 +1,4 @@
-module github.com/SincereMa/cortex-sidemark
+module github.com/SincereMa/sidetrail
 
 go 1.22
 

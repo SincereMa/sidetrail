@@ -1,4 +1,4 @@
-package cortex
+package sidetrail
 
 import (
 	"encoding/json"
@@ -6,7 +6,7 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/SincereMa/cortex-sidemark/internal/storage"
+	"github.com/SincereMa/sidetrail/internal/storage"
 )
 
 // getOptions carries the flags for the `get` command.
@@ -15,7 +15,7 @@ type getOptions struct {
 	human bool
 }
 
-// newGetCmd builds the `cortex get` subcommand. It looks up a
+// newGetCmd builds the `sidetrail get` subcommand. It looks up a
 // record by id (exact match, then prefix match) and writes it to
 // stdout. The default output is the record's raw JSON, suitable
 // for piping to jq or another tool. With --human, a short
@@ -30,7 +30,7 @@ func newGetCmd() *cobra.Command {
 			return runGet(cmd, args, opts)
 		},
 	}
-	cmd.Flags().StringVar(&opts.root, "root", "", "explicit path to a .cortex/ directory (default: search upward from CWD)")
+	cmd.Flags().StringVar(&opts.root, "root", "", "explicit path to a .sidetrail/ directory (default: search upward from CWD)")
 	cmd.Flags().BoolVar(&opts.human, "human", false, "print a one-line human summary instead of JSON")
 	return cmd
 }

@@ -1,5 +1,5 @@
-// Package cortex is the test surface for the root command.
-package cortex
+// Package sidetrail is the test surface for the root command.
+package sidetrail
 
 import (
 	"bytes"
@@ -18,8 +18,8 @@ func TestRootHelp(t *testing.T) {
 	if err := cmd.Execute(); err != nil {
 		t.Fatalf("--help returned error: %v", err)
 	}
-	if !strings.Contains(out.String(), "Cortex SideMark") {
-		t.Fatalf("expected help to mention Cortex SideMark, got: %q", out.String())
+	if !strings.Contains(out.String(), "SideTrail") {
+		t.Fatalf("expected help to mention SideTrail, got: %q", out.String())
 	}
 }
 
@@ -34,7 +34,7 @@ func TestRootVersion(t *testing.T) {
 	if err := cmd.Execute(); err != nil {
 		t.Fatalf("--version returned error: %v", err)
 	}
-	if !strings.Contains(out.String(), "cortex ") {
-		t.Fatalf("expected version output to start with 'cortex ', got: %q", out.String())
+	if !strings.Contains(out.String(), "sidetrail ") {
+		t.Fatalf("expected version output to start with 'sidetrail ', got: %q", out.String())
 	}
 }

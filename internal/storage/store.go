@@ -1,5 +1,5 @@
-// Package storage reads and writes Cortex SideMark record files
-// on disk under a project-local .cortex/ root.
+// Package storage reads and writes SideTrail record files
+// on disk under a project-local .sidetrail/ root.
 //
 // The on-disk layout is one record per file, identified by a
 // ULID. Writes are atomic. The store does not interpret record
@@ -14,7 +14,7 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/SincereMa/cortex-sidemark/internal/record"
+	"github.com/SincereMa/sidetrail/internal/record"
 )
 
 // Store is the on-disk record store rooted at Root. The zero
@@ -74,7 +74,7 @@ func (s *Store) Write(r *record.Record) (string, error) {
 	return s.writeToDir(r, dir)
 }
 
-// WriteSeed persists r under the .cortex/_seed/ subdirectory.
+// WriteSeed persists r under the .sidetrail/_seed/ subdirectory.
 // Seeds are scrape-derived candidates waiting for human review;
 // they live in their own subdirectory so the canonical kind
 // listings (decisions, constraints, ...) do not surface them

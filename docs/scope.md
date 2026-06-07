@@ -1,6 +1,6 @@
 # Scope
 
-The problems Cortex SideMark exists to address. This is the working
+The problems SideTrail exists to address. This is the working
 document that drives development; subsequent ADRs and adapter designs
 will be derived from it.
 

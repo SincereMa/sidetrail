@@ -27,7 +27,7 @@ jobs:
         run: make build
 
       - name: Smoke
-        run: ./bin/cortex --version
+        run: ./bin/sidetrail --version
 
       - name: Test
         run: make test

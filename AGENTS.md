@@ -1,4 +1,4 @@
-# AGENTS.md — Cortex SideMark
+# AGENTS.md — SideTrail
 
 Mission and pitch: [README.md](./README.md). This file is the
 "don't miss this" guide for AI agents working in the repo.
