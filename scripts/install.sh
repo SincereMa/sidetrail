@@ -1,18 +1,18 @@
 #!/usr/bin/env bash
-# Install the cortex CLI binary.
+# Install the sidetrail CLI binary.
 #
 # Usage: install.sh [options]
 #
 # Options:
 #   -V, --version <ver>    Install a specific version (default: latest)
 #   -d, --dir <path>       Install directory (default: ~/.local/bin)
-#   -r, --repo <owner/name> GitHub repo (default: SincereMa/cortex-sidemark)
+#   -r, --repo <owner/name> GitHub repo (default: SincereMa/sidetrail)
 #   -h, --help             Show this help
 #
 # Environment variables (overridden by flags):
-#   CORTEX_VERSION         Same as --version
-#   CORTEX_INSTALL_DIR     Same as --dir
-#   CORTEX_REPO            Same as --repo
+#   SIDETRAIL_VERSION         Same as --version
+#   SIDETRAIL_INSTALL_DIR     Same as --dir
+#   SIDETRAIL_REPO            Same as --repo
 
 set -euo pipefail
 
@@ -20,9 +20,9 @@ print_usage() {
   sed -n '2,/^$/p' "$0" | sed 's/^# \{0,1\}//'
 }
 
-REPO="${CORTEX_REPO:-SincereMa/cortex-sidemark}"
-VERSION="${CORTEX_VERSION:-}"
-INSTALL_DIR="${CORTEX_INSTALL_DIR:-$HOME/.local/bin}"
+REPO="${SIDETRAIL_REPO:-SincereMa/sidetrail}"
+VERSION="${SIDETRAIL_VERSION:-}"
+INSTALL_DIR="${SIDETRAIL_INSTALL_DIR:-$HOME/.local/bin}"
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
@@ -140,7 +140,7 @@ fi
 
 read -r OS ARCH < <(detect_platform)
 
-PROJECT="cortex"
+PROJECT="sidetrail"
 EXT="tar.gz"
 if [[ "$OS" == "windows" ]]; then
   EXT="zip"
@@ -175,9 +175,9 @@ echo "install.sh: installing to $INSTALL_DIR/$PROJECT"
 install -m 0755 "$WORK/extract/$PROJECT" "$INSTALL_DIR/$PROJECT"
 
 echo
-echo "cortex installed at: $INSTALL_DIR/$PROJECT"
+echo "sidetrail installed at: $INSTALL_DIR/$PROJECT"
 "$INSTALL_DIR/$PROJECT" --version
 echo
-if ! command -v cortex >/dev/null 2>&1; then
+if ! command -v sidetrail >/dev/null 2>&1; then
   echo "Note: $INSTALL_DIR is not on PATH. Add it to your shell profile." >&2
 fi

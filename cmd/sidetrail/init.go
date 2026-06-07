@@ -1,4 +1,4 @@
-package cortex
+package sidetrail
 
 import (
 	"bytes"
@@ -12,8 +12,8 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/SincereMa/cortex-sidemark/internal/record"
-	"github.com/SincereMa/cortex-sidemark/internal/storage"
+	"github.com/SincereMa/sidetrail/internal/record"
+	"github.com/SincereMa/sidetrail/internal/storage"
 )
 
 // initOptions carries the flags for the `init` command.
@@ -22,8 +22,8 @@ type initOptions struct {
 	noWrite bool
 }
 
-// initScanPaths enumerates the project paths cortex init looks
-// at. The list comes from ADR-0001. Patterns containing a
+// initScanPaths enumerates the project paths sidetrail init
+// looks at. The list comes from ADR-0001. Patterns containing a
 // slash are taken relative to the project root; the rest are
 // globbed at the project root.
 var initScanPaths = []string{
@@ -45,23 +45,23 @@ var initScanPaths = []string{
 // a large README does not bloat the seed.
 const seedBodyLimit = 500
 
-// newInitCmd builds the `cortex init` subcommand. It seeds a
-// fresh .cortex/ store by walking a fixed list of project
+// newInitCmd builds the `sidetrail init` subcommand. It seeds a
+// fresh .sidetrail/ store by walking a fixed list of project
 // paths and writing a candidate record for each existing file
-// under .cortex/_seed/. Seeds are scrape-derived candidates;
+// under .sidetrail/_seed/. Seeds are scrape-derived candidates;
 // they stay in _seed/ until a human moves them. The store is
 // usable from empty; init is optional.
 func newInitCmd() *cobra.Command {
 	opts := &initOptions{}
 	cmd := &cobra.Command{
 		Use:   "init [--root <project>] [--no-write]",
-		Short: "Seed a .cortex/ store from existing project docs",
+		Short: "Seed a .sidetrail/ store from existing project docs",
 		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			return runInit(cmd, args, opts)
 		},
 	}
-	cmd.Flags().StringVar(&opts.root, "root", "", "project root where .cortex/ will be created (default: CWD)")
+	cmd.Flags().StringVar(&opts.root, "root", "", "project root where .sidetrail/ will be created (default: CWD)")
 	cmd.Flags().BoolVar(&opts.noWrite, "no-write", false, "do not write seeds; print what would be done")
 	return cmd
 }
@@ -80,11 +80,11 @@ func runInit(cmd *cobra.Command, _ []string, opts *initOptions) error {
 		return reportPlan(cmd, projectRoot, seeds)
 	}
 
-	cortexDir := filepath.Join(projectRoot, ".cortex")
-	if err := os.MkdirAll(cortexDir, 0o755); err != nil {
-		return fmt.Errorf("mkdir %q: %w", cortexDir, err)
+	storeDir := filepath.Join(projectRoot, storeDirName)
+	if err := os.MkdirAll(storeDir, 0o755); err != nil {
+		return fmt.Errorf("mkdir %q: %w", storeDir, err)
 	}
-	s := storage.NewStore(cortexDir)
+	s := storage.NewStore(storeDir)
 	now := time.Now().UTC()
 	written := 0
 	for _, c := range seeds {
@@ -97,15 +97,15 @@ func runInit(cmd *cobra.Command, _ []string, opts *initOptions) error {
 		}
 		written++
 	}
-	fmt.Fprintf(cmd.OutOrStdout(), "scanned %d path(s); wrote %d seed(s) to %s\n", len(seeds), written, filepath.Join(cortexDir, "_seed"))
+	fmt.Fprintf(cmd.OutOrStdout(), "scanned %d path(s); wrote %d seed(s) to %s\n", len(seeds), written, filepath.Join(storeDir, "_seed"))
 	return nil
 }
 
 // resolveProjectRoot returns the absolute project root. When
 // opts.root is empty, the current working directory is used.
 // Unlike the other commands, init's --root is the project root
-// (where .cortex/ will be created), not the .cortex/ path
-// itself, because the .cortex/ directory does not exist yet.
+// (where .sidetrail/ will be created), not the .sidetrail/ path
+// itself, because the .sidetrail/ directory does not exist yet.
 func resolveProjectRoot(explicit string) (string, error) {
 	if explicit == "" {
 		wd, err := os.Getwd()
@@ -242,7 +242,7 @@ func buildSeedRecord(c seedCandidate, now time.Time) (*record.Record, error) {
 		Subject:        subject,
 		Reason:         fmt.Sprintf("Auto-seeded from %q. Review the file and promote to a real record when relevant.", c.path),
 		SourceType:     record.SourceScrape,
-		Author:         "cortex init",
+		Author:         "sidetrail init",
 		CreatedAt:      now,
 		LastVerifiedAt: now,
 		Status:         "active",
@@ -262,7 +262,7 @@ func buildSeedRecord(c seedCandidate, now time.Time) (*record.Record, error) {
 func reportPlan(cmd *cobra.Command, projectRoot string, seeds []seedCandidate) error {
 	out := cmd.OutOrStdout()
 	fmt.Fprintf(out, "would scan %d path(s) under %s\n", len(initScanPaths), projectRoot)
-	fmt.Fprintf(out, "would write %d seed(s) to %s\n", len(seeds), filepath.Join(projectRoot, ".cortex", "_seed"))
+	fmt.Fprintf(out, "would write %d seed(s) to %s\n", len(seeds), filepath.Join(projectRoot, storeDirName, "_seed"))
 	for _, c := range seeds {
 		fmt.Fprintf(out, "  - %s\n", c.path)
 	}

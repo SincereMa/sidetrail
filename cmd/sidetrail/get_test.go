@@ -1,5 +1,5 @@
-// Package cortex is the test surface for the get subcommand.
-package cortex
+// Package sidetrail is the test surface for the get subcommand.
+package sidetrail
 
 import (
 	"bytes"
@@ -10,8 +10,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/SincereMa/cortex-sidemark/internal/record"
-	"github.com/SincereMa/cortex-sidemark/internal/storage"
+	"github.com/SincereMa/sidetrail/internal/record"
+	"github.com/SincereMa/sidetrail/internal/storage"
 )
 
 // seedRecord writes a single decision record to the store under
@@ -59,11 +59,11 @@ func timePtr(t *testing.T, s string) *time.Time {
 	return &v
 }
 
-// TestGetJSON confirms `cortex get <id>` prints the record as
+// TestGetJSON confirms `sidetrail get <id>` prints the record as
 // indented JSON.
 func TestGetJSON(t *testing.T) {
 	root := t.TempDir()
-	cortexDir := filepath.Join(root, ".cortex")
+	cortexDir := filepath.Join(root, storeDirName)
 	if err := os.MkdirAll(cortexDir, 0o755); err != nil {
 		t.Fatal(err)
 	}
@@ -89,7 +89,7 @@ func TestGetJSON(t *testing.T) {
 // TestGetHuman confirms --human prints a one-line summary.
 func TestGetHuman(t *testing.T) {
 	root := t.TempDir()
-	cortexDir := filepath.Join(root, ".cortex")
+	cortexDir := filepath.Join(root, storeDirName)
 	if err := os.MkdirAll(cortexDir, 0o755); err != nil {
 		t.Fatal(err)
 	}
@@ -115,7 +115,7 @@ func TestGetHuman(t *testing.T) {
 // record.
 func TestGetPrefix(t *testing.T) {
 	root := t.TempDir()
-	cortexDir := filepath.Join(root, ".cortex")
+	cortexDir := filepath.Join(root, storeDirName)
 	if err := os.MkdirAll(cortexDir, 0o755); err != nil {
 		t.Fatal(err)
 	}
@@ -137,7 +137,7 @@ func TestGetPrefix(t *testing.T) {
 // TestGetMissing confirms a non-existent id produces an error.
 func TestGetMissing(t *testing.T) {
 	root := t.TempDir()
-	cortexDir := filepath.Join(root, ".cortex")
+	cortexDir := filepath.Join(root, storeDirName)
 	if err := os.MkdirAll(cortexDir, 0o755); err != nil {
 		t.Fatal(err)
 	}

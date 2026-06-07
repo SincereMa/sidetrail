@@ -1,5 +1,5 @@
-// Package cortex is the test surface for the list subcommand.
-package cortex
+// Package sidetrail is the test surface for the list subcommand.
+package sidetrail
 
 import (
 	"bytes"
@@ -10,15 +10,15 @@ import (
 	"testing"
 	"time"
 
-	"github.com/SincereMa/cortex-sidemark/internal/record"
-	"github.com/SincereMa/cortex-sidemark/internal/storage"
+	"github.com/SincereMa/sidetrail/internal/record"
+	"github.com/SincereMa/sidetrail/internal/storage"
 )
 
 // seedListFixture writes a small mixed-kind set of records to
 // the store and returns the store directory.
 func seedListFixture(t *testing.T) string {
 	t.Helper()
-	dir := filepath.Join(t.TempDir(), ".cortex")
+	dir := filepath.Join(t.TempDir(), storeDirName)
 	if err := os.MkdirAll(dir, 0o755); err != nil {
 		t.Fatal(err)
 	}

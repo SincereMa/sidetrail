@@ -1,4 +1,4 @@
-package cortex
+package sidetrail
 
 import (
 	"encoding/json"
@@ -6,8 +6,8 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/SincereMa/cortex-sidemark/internal/record"
-	"github.com/SincereMa/cortex-sidemark/internal/storage"
+	"github.com/SincereMa/sidetrail/internal/record"
+	"github.com/SincereMa/sidetrail/internal/storage"
 )
 
 // askOptions carries the flags for the `ask` command.
@@ -20,7 +20,7 @@ type askOptions struct {
 	jsonO bool
 }
 
-// newAskCmd builds the `cortex ask` subcommand. It is a
+// newAskCmd builds the `sidetrail ask` subcommand. It is a
 // structured query, not natural-language Q&A. The host agent
 // (or its human) supplies a scope pattern; the sidecar returns
 // the records that match, newest first, with optional kind and
@@ -35,7 +35,7 @@ func newAskCmd() *cobra.Command {
 			return runAsk(cmd, args, opts)
 		},
 	}
-	cmd.Flags().StringVar(&opts.root, "root", "", "explicit path to a .cortex/ directory (default: search upward from CWD)")
+	cmd.Flags().StringVar(&opts.root, "root", "", "explicit path to a .sidetrail/ directory (default: search upward from CWD)")
 	cmd.Flags().StringVar(&opts.scope, "scope", "", "scope pattern to match (required)")
 	cmd.Flags().StringVar(&opts.kind, "kind", "", "filter to one kind (decision, constraint, signal, experiment, incident)")
 	cmd.Flags().StringVar(&opts.tag, "tag", "", "filter to records carrying this tag")

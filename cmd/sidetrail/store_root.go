@@ -1,4 +1,4 @@
-package cortex
+package sidetrail
 
 import (
 	"fmt"
@@ -6,11 +6,15 @@ import (
 	"path/filepath"
 )
 
+// storeDirName is the canonical on-disk directory for the
+// record store. Exposed as a constant so init, tests, and the
+// install documentation refer to the same string.
+const storeDirName = ".sidetrail"
+
 // findStoreRoot walks upward from start, looking for the first
-// directory that contains a `.cortex/` subdirectory. It returns
-// the absolute path of that `.cortex/` directory. The walk stops
-// at the filesystem root and never follows symlinks into other
-// parts of the tree.
+// directory that contains a `.sidetrail/` subdirectory. The
+// walk stops at the filesystem root and never follows symlinks
+// into other parts of the tree.
 //
 // The default start is the current working directory. Callers
 // may pass an explicit path to override (used by tests).
@@ -28,27 +32,26 @@ func findStoreRoot(start string) (string, error) {
 	}
 	dir := abs
 	for {
-		candidate := filepath.Join(dir, ".cortex")
+		candidate := filepath.Join(dir, storeDirName)
 		info, err := os.Stat(candidate)
-		switch {
-		case err == nil && info.IsDir():
+		if err == nil && info.IsDir() {
 			return candidate, nil
-		case err != nil && !os.IsNotExist(err):
+		}
+		if err != nil && !os.IsNotExist(err) {
 			return "", fmt.Errorf("stat %q: %w", candidate, err)
 		}
 		parent := filepath.Dir(dir)
 		if parent == dir {
-			return "", fmt.Errorf("no .cortex/ found from %q upward", abs)
+			return "", fmt.Errorf("no %s/ found from %q upward", storeDirName, abs)
 		}
 		dir = parent
 	}
 }
 
-// resolveStoreRoot returns the .cortex/ directory the CLI should
-// use. When explicit is non-empty, it must be a directory that
-// already contains a .cortex/ subdirectory; when it is empty,
-// findStoreRoot searches upward from the current working
-// directory.
+// resolveStoreRoot returns the store directory the CLI should
+// use. When explicit is non-empty it must be a directory that
+// already exists; when it is empty, findStoreRoot searches
+// upward from the current working directory.
 func resolveStoreRoot(explicit string) (string, error) {
 	if explicit == "" {
 		return findStoreRoot("")

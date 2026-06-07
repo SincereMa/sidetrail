@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://cortex-sidemark/schemas/record.json",
-  "title": "Cortex SideMark record",
+  "$id": "https://sidetrail.dev/schemas/record.json",
+  "title": "SideTrail record",
   "type": "object",
   "additionalProperties": false,
   "required": [

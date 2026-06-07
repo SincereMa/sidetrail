@@ -1,12 +1,12 @@
-package cortex
+package sidetrail
 
 import (
 	"fmt"
 
 	"github.com/spf13/cobra"
 
-	"github.com/SincereMa/cortex-sidemark/internal/record"
-	"github.com/SincereMa/cortex-sidemark/internal/storage"
+	"github.com/SincereMa/sidetrail/internal/record"
+	"github.com/SincereMa/sidetrail/internal/storage"
 )
 
 // listOptions carries the flags for the `list` command.
@@ -17,8 +17,8 @@ type listOptions struct {
 	jsonO bool
 }
 
-// newListCmd builds the `cortex list` subcommand. It enumerates
-// records under the .cortex/ store, optionally filtered by
+// newListCmd builds the `sidetrail list` subcommand. It enumerates
+// records under the .sidetrail/ store, optionally filtered by
 // --kind, capped at --limit (default 50), and printed as JSON
 // (--json) or as a human-readable table (default).
 func newListCmd() *cobra.Command {
@@ -31,7 +31,7 @@ func newListCmd() *cobra.Command {
 			return runList(cmd, args, opts)
 		},
 	}
-	cmd.Flags().StringVar(&opts.root, "root", "", "explicit path to a .cortex/ directory (default: search upward from CWD)")
+	cmd.Flags().StringVar(&opts.root, "root", "", "explicit path to a .sidetrail/ directory (default: search upward from CWD)")
 	cmd.Flags().StringVar(&opts.kind, "kind", "", "filter to one kind (decision, constraint, signal, experiment, incident)")
 	cmd.Flags().IntVar(&opts.limit, "limit", 50, "maximum number of records to return")
 	cmd.Flags().BoolVar(&opts.jsonO, "json", false, "emit JSON array of records instead of a table")

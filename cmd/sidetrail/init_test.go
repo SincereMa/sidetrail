@@ -1,5 +1,5 @@
-// Package cortex is the test surface for the init subcommand.
-package cortex
+// Package sidetrail is the test surface for the init subcommand.
+package sidetrail
 
 import (
 	"bytes"
@@ -9,7 +9,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/SincereMa/cortex-sidemark/internal/record"
+	"github.com/SincereMa/sidetrail/internal/record"
 )
 
 // seedProjectTree lays down a small project with the canonical
@@ -60,13 +60,13 @@ func TestInitNoWrite(t *testing.T) {
 	if !strings.Contains(out.String(), "would write") {
 		t.Errorf("dry-run output should say 'would write', got:\n%s", out.String())
 	}
-	// No .cortex/ should be created.
-	if _, err := os.Stat(filepath.Join(root, ".cortex")); err == nil {
-		t.Error("dry-run should not create .cortex/")
+	// No .sidetrail/ should be created.
+	if _, err := os.Stat(filepath.Join(root, storeDirName)); err == nil {
+		t.Error("dry-run should not create .sidetrail/")
 	}
 }
 
-// TestInitWritesSeeds confirms init creates .cortex/_seed/
+// TestInitWritesSeeds confirms init creates .sidetrail/_seed/
 // with one record per found file.
 func TestInitWritesSeeds(t *testing.T) {
 	root := seedProjectTree(t)
@@ -80,10 +80,10 @@ func TestInitWritesSeeds(t *testing.T) {
 		t.Fatalf("init returned error: %v\n%s", err, out.String())
 	}
 
-	seedDir := filepath.Join(root, ".cortex", "_seed")
+	seedDir := filepath.Join(root, storeDirName, "_seed")
 	entries, err := os.ReadDir(seedDir)
 	if err != nil {
-		t.Fatalf("expected .cortex/_seed to exist: %v", err)
+		t.Fatalf("expected .sidetrail/_seed to exist: %v", err)
 	}
 	// We seeded 7 files (README, CONTRIBUTING, AGENTS, LICENSE,
 	// 2 docs/decisions/*, .github/PULL_REQUEST_TEMPLATE.md).
@@ -106,14 +106,14 @@ func TestInitWritesSeeds(t *testing.T) {
 		if r.SourceType != record.SourceScrape {
 			t.Errorf("seed %s should have source_type=scrape, got %q", e.Name(), r.SourceType)
 		}
-		if r.Author != "cortex init" {
-			t.Errorf("seed %s should have author='cortex init', got %q", e.Name(), r.Author)
+		if r.Author != "sidetrail init" {
+			t.Errorf("seed %s should have author='sidetrail init', got %q", e.Name(), r.Author)
 		}
 	}
 }
 
 // TestInitSeedsNotInList confirms seeds are not surfaced by
-// `cortex list` (which only walks the canonical kind dirs).
+// `sidetrail list` (which only walks the canonical kind dirs).
 func TestInitSeedsNotInList(t *testing.T) {
 	root := seedProjectTree(t)
 
@@ -130,7 +130,7 @@ func TestInitSeedsNotInList(t *testing.T) {
 	out.Reset()
 	listCmd.SetOut(&out)
 	listCmd.SetErr(&out)
-	listCmd.SetArgs([]string{"list", "--root", filepath.Join(root, ".cortex")})
+	listCmd.SetArgs([]string{"list", "--root", filepath.Join(root, storeDirName)})
 	if err := listCmd.Execute(); err != nil {
 		t.Fatalf("list returned error: %v", err)
 	}

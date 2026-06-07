@@ -1,6 +1,6 @@
-// Package cortex is the test surface for the supersede
+// Package sidetrail is the test surface for the supersede
 // subcommand.
-package cortex
+package sidetrail
 
 import (
 	"bytes"
@@ -32,7 +32,7 @@ const supersedeNewRecordJSON = `{
 // supersedes, and writes both to the store.
 func TestSupersedeSwaps(t *testing.T) {
 	root := t.TempDir()
-	cortexDir := filepath.Join(root, ".cortex")
+	cortexDir := filepath.Join(root, storeDirName)
 	if err := os.MkdirAll(cortexDir, 0o755); err != nil {
 		t.Fatal(err)
 	}
@@ -88,7 +88,7 @@ func TestSupersedeSwaps(t *testing.T) {
 // which is meaningless and almost certainly a user error).
 func TestSupersedeSameID(t *testing.T) {
 	root := t.TempDir()
-	cortexDir := filepath.Join(root, ".cortex")
+	cortexDir := filepath.Join(root, storeDirName)
 	if err := os.MkdirAll(cortexDir, 0o755); err != nil {
 		t.Fatal(err)
 	}
@@ -113,7 +113,7 @@ func TestSupersedeSameID(t *testing.T) {
 // TestSupersedeDryRun confirms --dry-run does not write.
 func TestSupersedeDryRun(t *testing.T) {
 	root := t.TempDir()
-	cortexDir := filepath.Join(root, ".cortex")
+	cortexDir := filepath.Join(root, storeDirName)
 	if err := os.MkdirAll(cortexDir, 0o755); err != nil {
 		t.Fatal(err)
 	}

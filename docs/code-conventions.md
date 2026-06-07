@@ -44,7 +44,7 @@ repository.
   name, lowercase, no underscores.
 - `internal/` packages are not importable from outside the module.
   Use it for anything the sidecar does not expose as a public API.
-- `cmd/cortex/` is the only command entry point. Subcommands live
+- `cmd/sidetrail/` is the only command entry point. Subcommands live
   as files alongside `root.go`.
 - No `pkg/` directory. `internal/` is enough.
 
@@ -54,7 +54,7 @@ repository.
   party, project. `goimports` enforces this.
 - No dot imports, no underscore imports except in test files for
   side-effect packages (and we have none yet).
-- Module path is `github.com/SincereMa/cortex-sidemark` per
+- Module path is `github.com/SincereMa/sidetrail` per
   [ADR-0003](./decisions/0003-technology-stack.md).
 
 ### Naming
@@ -130,7 +130,7 @@ expected, not optional.
 
 ### Resources and the filesystem
 
-- The sidecar reads and writes only inside `.cortex/` relative
+- The sidecar reads and writes only inside `.sidetrail/` relative
   to the project root. Writes outside this tree are a bug.
 - Use `filepath.Join` for paths. Hard-coded `/` or `\` is a
   portability bug. `path/filepath` everywhere; `path` only for
@@ -198,17 +198,17 @@ explicitly so that AI agents do not need to infer them.
 
 Beyond the ADRs, these are conventions that span the codebase:
 
-- The sidecar's public CLI surface is what `cortex --help` shows.
+- The sidecar's public CLI surface is what `sidetrail --help` shows.
   Adding a subcommand is a deliberate act; discuss in the PR.
 - File-on-disk formats are versioned by the directory layout
   itself. Adding a new field to a record is non-breaking; adding
   a new directory is a new ADR.
 - The four data structures (`record`, `edge`, `signal`, `drift`)
-  each get their own package and their own `.cortex/`
+  each get their own package and their own `.sidetrail/`
   subdirectory. They share metadata conventions but not schema.
-- A `.cortex/_seed/`, `_proposed/`, or `_derived/` subdirectory
+- A `.sidetrail/_seed/`, `_proposed/`, or `_derived/` subdirectory
   holds machine-claimed records. They never appear in
-  `cortex ask` results without an explicit `--include-seed`
+  `sidetrail ask` results without an explicit `--include-seed`
   flag.
 - Cross-platform discipline is enforced in review. A PR that
   uses `os/exec` with a shell, hard-codes a path separator, or

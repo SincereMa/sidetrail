@@ -1,5 +1,5 @@
-// Package cortex is the test surface for the verify subcommand.
-package cortex
+// Package sidetrail is the test surface for the verify subcommand.
+package sidetrail
 
 import (
 	"bytes"
@@ -13,7 +13,7 @@ import (
 // record's last_verified_at to a recent timestamp.
 func TestVerifyStampsRecord(t *testing.T) {
 	root := t.TempDir()
-	cortexDir := filepath.Join(root, ".cortex")
+	cortexDir := filepath.Join(root, storeDirName)
 	if err := os.MkdirAll(cortexDir, 0o755); err != nil {
 		t.Fatal(err)
 	}
@@ -53,7 +53,7 @@ func TestVerifyStampsRecord(t *testing.T) {
 // error.
 func TestVerifyMissing(t *testing.T) {
 	root := t.TempDir()
-	cortexDir := filepath.Join(root, ".cortex")
+	cortexDir := filepath.Join(root, storeDirName)
 	if err := os.MkdirAll(cortexDir, 0o755); err != nil {
 		t.Fatal(err)
 	}

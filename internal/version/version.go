@@ -3,8 +3,8 @@
 // The Version and Commit variables are set at build time via
 // ldflags:
 //
-//	-X github.com/SincereMa/cortex-sidemark/internal/version.Version=v0.1.0
-//	-X github.com/SincereMa/cortex-sidemark/internal/version.Commit=abc1234
+//	-X github.com/SincereMa/sidetrail/internal/version.Version=v0.1.0
+//	-X github.com/SincereMa/sidetrail/internal/version.Commit=abc1234
 package version
 
 // Version is the human-readable release tag. Defaults to "dev"

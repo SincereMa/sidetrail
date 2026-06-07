@@ -10,7 +10,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/SincereMa/cortex-sidemark/internal/record"
+	"github.com/SincereMa/sidetrail/internal/record"
 )
 
 // newStore returns a Store rooted at a per-test temp directory.
@@ -481,13 +481,13 @@ func TestContextForEmptyFile(t *testing.T) {
 }
 
 // TestWriteSeed confirms a record is written under
-// .cortex/_seed/ and is NOT returned by ListAll (which only
+// .sidetrail/_seed/ and is NOT returned by ListAll (which only
 // walks the canonical kind directories).
 func TestWriteSeed(t *testing.T) {
 	s := newStore(t)
 	r := sampleRecord(t, record.KindDecision)
 	r.SourceType = record.SourceScrape
-	r.Author = "cortex init"
+	r.Author = "sidetrail init"
 
 	path, err := s.WriteSeed(r)
 	if err != nil {

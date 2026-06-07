@@ -1,12 +1,12 @@
-package cortex
+package sidetrail
 
 import (
 	"fmt"
 
 	"github.com/spf13/cobra"
 
-	"github.com/SincereMa/cortex-sidemark/internal/record"
-	"github.com/SincereMa/cortex-sidemark/internal/storage"
+	"github.com/SincereMa/sidetrail/internal/record"
+	"github.com/SincereMa/sidetrail/internal/storage"
 )
 
 // supersedeOptions carries the flags for the `supersede`
@@ -17,7 +17,7 @@ type supersedeOptions struct {
 	dryRun bool
 }
 
-// newSupersedeCmd builds the `cortex supersede` subcommand.
+// newSupersedeCmd builds the `sidetrail supersede` subcommand.
 // It marks an existing record as superseded and, in the same
 // transaction, writes a new replacement record. The
 // relationship is wired in both directions: the old record's
@@ -39,7 +39,7 @@ func newSupersedeCmd() *cobra.Command {
 			return runSupersede(cmd, args, opts)
 		},
 	}
-	cmd.Flags().StringVar(&opts.root, "root", "", "explicit path to a .cortex/ directory (default: search upward from CWD)")
+	cmd.Flags().StringVar(&opts.root, "root", "", "explicit path to a .sidetrail/ directory (default: search upward from CWD)")
 	cmd.Flags().StringVar(&opts.new, "new", "", "path to a record file that replaces the old record (required)")
 	cmd.Flags().BoolVar(&opts.dryRun, "dry-run", false, "do not write; print what would change")
 	_ = cmd.MarkFlagRequired("new")

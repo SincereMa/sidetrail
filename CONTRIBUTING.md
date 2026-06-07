@@ -1,6 +1,6 @@
-# Contributing to Cortex SideMark
+# Contributing to SideTrail
 
-Thanks for your interest in contributing. Cortex SideMark is an early-stage
+Thanks for your interest in contributing. SideTrail is an early-stage
 project, and clear, well-scoped contributions are very welcome.
 
 ## Before you start

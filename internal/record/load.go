@@ -11,7 +11,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/SincereMa/cortex-sidemark/internal/schema"
+	"github.com/SincereMa/sidetrail/internal/schema"
 )
 
 // LoadFile reads path, validates the bytes against the record

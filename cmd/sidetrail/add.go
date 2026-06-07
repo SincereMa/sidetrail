@@ -1,12 +1,12 @@
-package cortex
+package sidetrail
 
 import (
 	"fmt"
 
 	"github.com/spf13/cobra"
 
-	"github.com/SincereMa/cortex-sidemark/internal/record"
-	"github.com/SincereMa/cortex-sidemark/internal/storage"
+	"github.com/SincereMa/sidetrail/internal/record"
+	"github.com/SincereMa/sidetrail/internal/storage"
 )
 
 // addOptions carries the flags for the `add` command.
@@ -14,7 +14,7 @@ type addOptions struct {
 	root string
 }
 
-// newAddCmd builds the `cortex add` subcommand. It validates a
+// newAddCmd builds the `sidetrail add` subcommand. It validates a
 // record file against the schema and writes it to the project
 // store. The new record's id and the absolute path of the
 // written file are printed on stdout; the id is also printed on
@@ -29,7 +29,7 @@ func newAddCmd() *cobra.Command {
 			return runAdd(cmd, args, opts)
 		},
 	}
-	cmd.Flags().StringVar(&opts.root, "root", "", "explicit path to a .cortex/ directory (default: search upward from CWD)")
+	cmd.Flags().StringVar(&opts.root, "root", "", "explicit path to a .sidetrail/ directory (default: search upward from CWD)")
 	return cmd
 }
 
