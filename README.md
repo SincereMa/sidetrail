@@ -111,9 +111,9 @@ Both scripts accept flags. See `scripts/install.sh --help` or
 `~/.local/bin` (or `%USERPROFILE%\bin` on Windows) by default; add
 that directory to `PATH` if it is not already.
 
-For a pinned version, set `CORTEX_VERSION=v0.1.0` (or pass
+For a pinned version, set `SIDETRAIL_VERSION=v0.1.0` (or pass
 `--version` / `-Version`). For a custom install location, set
-`CORTEX_INSTALL_DIR` (or pass `--dir` / `-InstallDir`).
+`SIDETRAIL_INSTALL_DIR` (or pass `--dir` / `-InstallDir`).
 
 If you prefer to install manually, download a release archive from
 the [GitHub releases page](https://github.com/SincereMa/sidetrail/releases),
@@ -131,13 +131,14 @@ verify it against the matching `*_checksums.txt`, and place the
 | `docs/scope.md` | The problems SideTrail exists to address; the input to subsequent ADRs. |
 | `docs/decisions/` | Architectural decision records. |
 | `docs/agents/` | Per-host-agent adapter specifications. |
+| `ROADMAP.md` | Implementation status, outstanding tasks, and next milestones. |
 
 ## CLI surface
 
 The  `sidetrail` binary is a read-dominant command. Most calls ask a
 question; a few write a record. The `.sidetrail/` store is discovered
 by walking upward from the current working directory unless
-`--root` points elsewhere. The CLI surface has twelve subcommands:
+`--root` points elsewhere. The CLI surface has thirteen subcommands:
 
 | Command | Purpose |
 | --- | --- |

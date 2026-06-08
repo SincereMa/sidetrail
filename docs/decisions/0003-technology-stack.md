@@ -68,12 +68,12 @@ GoReleaser builds binaries for linux/darwin/windows × amd64/arm64 and produces 
 
 ### 7. Distribution: single binary + package manager formulas + install script
 
-- **macOS:** universal2 binary.tar.gz + Homebrew formula in `analytic/homebrew-tap`. Pip install:
-  `brew install analytic/tap/sidetrail`.
+- **macOS:** universal2 binary.tar.gz + Homebrew formula in `SincereMa/homebrew-tap`. Pip install:
+  `brew install SincereMa/tap/sidetrail`.
 - **Linux:** binary.tar.gz (fallback), `.deb`, `.rpm`. Pip install
   is handled by the package manager; for unknown distributions
   the install script (`curl -fsSL https://sidetrail.dev/install.sh | sh`) places the binary in `~/.local/bin/` or `/usr/local/bin/`.
-- **Windows:** binary.tar.gz and zip + Scoop manifest in `analytic/bucket`. Pip install: `install sidetrail`. PowerShell install script:
+- **Windows:** binary.tar.gz and zip + Scoop manifest in `SincereMa/bucket`. Pip install: `install sidetrail`. PowerShell install script:
   `iwr https://sidetrail.dev/install.ps1 -useb | iex`.
 
 Explicitly **not** shipping:

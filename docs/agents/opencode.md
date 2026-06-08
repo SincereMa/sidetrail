@@ -1,33 +1,5 @@
 # OpenCode adapter for SideTrail
 
-## Philosophy
-
-The hard constraints from
-[AGENTS.md](../../AGENTS.md) apply in full:
-
-- **Non-intrusive.** Observe and record; never edit the host
-  agent. Redesign any feature that requires touching the host.
-- **Sidecar, not replacement.** SideTrail is a sidecar that runs
-  alongside OpenCode. It is not a replacement for OpenCode itself
-  and does not replace its own tooling and does not modify it.
-- **Lightweight.** No heavy runtime, no bundled LLM calls the user
-  did not request, no surprise transitive dependencies.
-- **Standard install.** The `sidetrail` binary should install via
-  any standard package manager command.
-
-OpenCode's mechanisms that make this adapter possible:
-
-1. **Skill files** — on-demand instructions loaded via the
-   `skill` tool.
-2. **`AGENTS.md` linkage** — always-on instructions that OpenCode
-   loads at session start.
-3. **MCP (planned)** — a future adapter surface (section 5).
-
-Skills are the high-value, low-friction integration point for v0.
-They load on-demand when triggered by the user and do not require
-any background process. A `sidetrail-suggest` subcommand will
-handle this in v1; the skill + AGENTS.md combination is enough for v0.
-
 ## 1. Philosophy
 
 The hard constraints from
