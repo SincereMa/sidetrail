@@ -42,6 +42,57 @@ func TestSlugLength(t *testing.T) {
 	}
 }
 
+// TestKindValid confirms Kind.Valid accepts all five defined kinds
+// and rejects unknown values.
+func TestKindValid(t *testing.T) {
+	valid := []Kind{KindDecision, KindConstraint, KindSignal, KindExperiment, KindIncident}
+	for _, k := range valid {
+		if !k.Valid() {
+			t.Errorf("Kind(%q).Valid() = false, want true", k)
+		}
+	}
+	invalid := []Kind{"", "unknown", "Decision", "CONSTRAINT"}
+	for _, k := range invalid {
+		if k.Valid() {
+			t.Errorf("Kind(%q).Valid() = true, want false", k)
+		}
+	}
+}
+
+// TestSourceTypeValid confirms SourceType.Valid accepts all four
+// defined source types and rejects unknown values.
+func TestSourceTypeValid(t *testing.T) {
+	valid := []SourceType{SourceHuman, SourceAgentSuggested, SourceScrape, SourceDerived}
+	for _, s := range valid {
+		if !s.Valid() {
+			t.Errorf("SourceType(%q).Valid() = false, want true", s)
+		}
+	}
+	invalid := []SourceType{"", "unknown", "Human", "AGENT"}
+	for _, s := range invalid {
+		if s.Valid() {
+			t.Errorf("SourceType(%q).Valid() = true, want false", s)
+		}
+	}
+}
+
+// TestSeverityValid confirms Severity.Valid accepts hard and soft
+// and rejects unknown values.
+func TestSeverityValid(t *testing.T) {
+	valid := []Severity{SeverityHard, SeveritySoft}
+	for _, s := range valid {
+		if !s.Valid() {
+			t.Errorf("Severity(%q).Valid() = false, want true", s)
+		}
+	}
+	invalid := []Severity{"", "medium", "critical", "HARD"}
+	for _, s := range invalid {
+		if s.Valid() {
+			t.Errorf("Severity(%q).Valid() = true, want false", s)
+		}
+	}
+}
+
 // TestNewIDMonotonic verifies that two NewID calls separated by
 // a measurable interval return strictly increasing IDs.
 func TestNewIDMonotonic(t *testing.T) {
