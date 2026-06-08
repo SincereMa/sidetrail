@@ -36,7 +36,6 @@ var initScanPaths = []string{
 	"docs/adr*",
 	"docs/decisions",
 	"docs/architecture",
-	"docs/runbooks",
 	".github/PULL_REQUEST_TEMPLATE.md",
 	".github/ISSUE_TEMPLATE",
 }

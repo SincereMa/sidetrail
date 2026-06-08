@@ -5,12 +5,14 @@ Mission and pitch: [README.md](./README.md). This file is the
 
 ## Status
 
-- **Greenfield.** No source, no build, no tests, no CI. The first
-  PR establishes the layout — do not scaffold a large tree
-  speculatively.
-- **Undecided stack.** Language, framework, storage, IPC, and
-  host-agent target are not chosen. When chosen, record as ADRs
-  in [docs/decisions/](./decisions/).
+- **v0 CLI implemented.** Go binary with 13 subcommands,
+  JSON schema validation, ULID record IDs, and an embedded
+  on-disk store (`.sidetrail/`). Tests and CI are in place.
+- **Stack chosen.** Go + Cobra + JSON Schema (Draft 2020-12)
+  + ULID + GoReleaser. See [ADR-0003](docs/decisions/0003-technology-stack.md).
+- **Host-agent adapter not yet implemented.** Adapter guidance
+  exists in [docs/agents/](docs/agents/); no executable adapter
+  code yet.
 
 ## Hard constraints (non-negotiable)
 
@@ -111,5 +113,4 @@ tests pass.
 | `.github/PULL_REQUEST_TEMPLATE.md` | PR template; includes the AGENTS.md compliance checkbox. |
 
 Update this file when the picture changes: a new agent adapter
-appears, a principle is refined, a major decision is made, or the
-project leaves greenfield.
+appears, a principle is refined, or a major decision is made.
