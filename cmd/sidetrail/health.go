@@ -3,7 +3,6 @@ package sidetrail
 import (
 	"encoding/json"
 	"fmt"
-	"strings"
 	"time"
 
 	"github.com/spf13/cobra"
@@ -143,9 +142,4 @@ func writeHealthTable(cmd *cobra.Command, rpt *healthReport, staleDays int) {
 			fmt.Fprintf(out, "  %s  %s  %s  (%d days)\n", r.ID, r.Kind, r.Subject, days)
 		}
 	}
-}
-
-// hasPrefix reports whether s starts with prefix.
-func hasPrefix(s, prefix string) bool {
-	return strings.HasPrefix(s, prefix)
 }
