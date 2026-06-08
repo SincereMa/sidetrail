@@ -137,7 +137,7 @@ verify it against the matching `*_checksums.txt`, and place the
 The  `sidetrail` binary is a read-dominant command. Most calls ask a
 question; a few write a record. The `.sidetrail/` store is discovered
 by walking upward from the current working directory unless
-`--root` points elsewhere.
+`--root` points elsewhere. The CLI surface has twelve subcommands:
 
 | Command | Purpose |
 | --- | --- |
@@ -149,7 +149,11 @@ by walking upward from the current working directory unless
 | `sidetrail verify <id>` | Refresh a record's `last_verified_at`. |
 | `sidetrail supersede <old-id> --new <file>` | Mark a record superseded and add a replacement. |
 | `sidetrail init [--root <project>] [--no-write]` | Seed a `.sidetrail/` store from existing project docs. |
+| `sidetrail promote [<id>...] [--all]` | Promote seed records from `_seed/` to the active store. |
+| `sidetrail draft <kind> --subject <s>` | Create a draft record for human review in `_draft/`. |
+| `sidetrail status <id> <archived\|hidden\|active>` | Transition a record's status. |
 | `sidetrail validate <file>... [--json]` | Validate record files against the schema. |
+| `sidetrail health [--json] [--stale-days N]` | Report project health signals and stale records. |
 
 The first host-agent integration point is `sidetrail context`: point
 it at the file the agent is about to edit, and it returns the

@@ -42,6 +42,10 @@ write a record.`,
 		newVerifyCmd(),
 		newSupersedeCmd(),
 		newInitCmd(),
+		newPromoteCmd(),
+		newDraftCmd(),
+		newStatusCmd(),
+		newHealthCmd(),
 	)
 	return cmd
 }

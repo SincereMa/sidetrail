@@ -297,6 +297,23 @@ func sortByCreatedAtDesc(recs []*record.Record) {
 	})
 }
 
+// WriteDraft persists r under the .sidetrail/_draft/ subdirectory.
+// Drafts are complete, schema-valid records waiting for human
+// review before being promoted to the main store via `sidetrail promote`.
+func (s *Store) WriteDraft(r *record.Record) (string, error) {
+	if !r.Kind.Valid() {
+		return "", fmt.Errorf("invalid kind: %q", r.Kind)
+	}
+	if r.ID == "" {
+		return "", fmt.Errorf("record id must not be empty")
+	}
+	dir := filepath.Join(s.root, "_draft")
+	if err := os.MkdirAll(dir, 0o755); err != nil {
+		return "", fmt.Errorf("mkdir %q: %w", dir, err)
+	}
+	return s.writeToDir(r, dir)
+}
+
 // Ask returns records whose scope matches the pattern, optionally
 // filtered by kind and tag, sorted newest first and capped at
 // limit. A non-positive limit means "no cap".
