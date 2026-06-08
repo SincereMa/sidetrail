@@ -20,6 +20,7 @@ decisions that shaped the current shape are in
 | --- | --- |
 | [topology.md](./topology.md) | Module and library graph: packages, subcommands, the on-disk store layout, and the external dependencies in `go.mod`. |
 | [sequences.md](./sequences.md) | Three end-to-end sequence diagrams for the flows a host agent or a human operator is most likely to run: `ask`, `init`, `supersede`. |
+| [go-code-overview.md](./go-code-overview.md) | Go code structure, directory hierarchy, and call chain relationships. |
 | [README.md](./README.md) | This file. The feature inventory, organised by subcommand. |
 
 ## Feature inventory
