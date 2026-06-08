@@ -17,6 +17,7 @@ The three flows are:
 ## `ask` — read-dominant primary path
 
 Source: [`cmd/sidetrail/ask.go`](../../cmd/sidetrail/ask.go),
+[`cmd/sidetrail/list.go`](../../cmd/sidetrail/list.go),
 [`cmd/sidetrail/store_root.go`](../../cmd/sidetrail/store_root.go),
 [`internal/storage/store.go`](../../internal/storage/store.go),
 [`internal/record/match.go`](../../internal/record/match.go).

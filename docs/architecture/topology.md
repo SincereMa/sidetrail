@@ -29,6 +29,10 @@ graph TD
     CTX[context.go]
     VER[verify.go]
     SUP[supersede.go]
+    PROMOTE[promote.go]
+    DRAFT[draft.go]
+    STATUS[status.go]
+    HEALTH[health.go]
   end
 
   subgraph Domain[Domain layer - internal/record]
@@ -39,7 +43,7 @@ graph TD
   end
 
   subgraph Storage[Storage layer - internal/storage]
-    STO[store.go<br/>Store: Write / WriteSeed / Read /<br/>List / ListAll / ListKind / Get /<br/>Ask / ContextFor]
+    STO[store.go<br/>Store: Write / WriteSeed / WriteDraft / Read /<br/>List / ListAll / ListKind / Get /<br/>Ask / ContextFor]
   end
 
   subgraph Schema[Schema layer - internal/schema]
@@ -63,7 +67,7 @@ graph TD
   MAIN --> ROOT
   ROOT --> COBRA
   ROOT --> VERP
-  ROOT --> INIT & VAL & ADD & GET & LIST & ASK & CTX & VER & SUP
+  ROOT --> INIT & VAL & ADD & GET & LIST & ASK & CTX & VER & SUP & PROMOTE & DRAFT & STATUS & HEALTH
 
   INIT --> SR
   INIT --> REC
@@ -78,6 +82,10 @@ graph TD
   VER  --> SR & STO
   SUP  --> LOAD & SR & STO
   SUP  --> REC
+  PROMOTE --> SR & STO & REC
+  DRAFT --> SR & STO & REC
+  STATUS --> SR & STO
+  HEALTH --> SR & STO & REC
 
   LOAD --> SCH
   SCH  --> JSN
@@ -123,9 +131,3 @@ graph TD
   `os.Stat`, not `EvalSymlinks`. The first directory that
   contains a `.sidetrail/` subdirectory wins; the search
   stops at the filesystem root.
-- **`AGENTS.md` describes the project as "Greenfield. No
-  source, no build, no tests, no CI."** That is no longer
-  accurate. The repository contains nine subcommands, a
-  complete test suite (`*_test.go` next to every non-test
-  file), CI workflows under `.github/workflows/`, and a
-  GoReleaser config. The status line should be updated.
