@@ -20,6 +20,10 @@ builds:
     binary: sidetrail
     env:
       - CGO_ENABLED=0
+    ldflags:
+      - -s -w
+      - -X github.com/SincereMa/sidetrail/internal/version.Version={{.Version}}
+      - -X github.com/SincereMa/sidetrail/internal/version.Commit={{.Commit}}
     goos:
       - linux
       - darwin
