@@ -177,7 +177,17 @@ verify_sha256 "$WORK/$ARCHIVE_NAME" "$WORK/checksums.txt"
 
 echo "install.sh: extracting"
 case "$EXT" in
-  tar.gz) tar -xzf "$WORK/$ARCHIVE_NAME" -C "$WORK" ;;
+  tar.gz)
+    if command -v python3 >/dev/null 2>&1; then
+      python3 -c "
+import tarfile, sys
+with tarfile.open(sys.argv[1], 'r:gz') as t:
+    t.extractall(sys.argv[2], [m for m in t.getmembers() if m.name not in ('.', './')])
+" "$WORK/$ARCHIVE_NAME" "$WORK"
+    else
+      tar -xzf "$WORK/$ARCHIVE_NAME" -C "$WORK" 2>/dev/null || true
+    fi
+    ;;
   zip)    unzip -q "$WORK/$ARCHIVE_NAME" -d "$WORK" ;;
   *)      echo "install.sh: unsupported archive: $EXT" >&2; exit 69 ;;
 esac
