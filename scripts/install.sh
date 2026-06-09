@@ -74,8 +74,19 @@ resolve_latest_version() {
   local url="https://api.github.com/repos/${REPO}/releases/latest"
   local body
   body="$(mktemp)"
-  fetch "$url" "$body"
-  # Parse tag_name without invoking a shell pipeline.
+  if fetch "$url" "$body" 2>/dev/null; then
+    local tag
+    tag="$(grep -o '"tag_name"[[:space:]]*:[[:space:]]*"[^"]*"' "$body" | head -n1 | sed 's/.*"\([^"]*\)"$/\1/')"
+    if [[ -n "$tag" ]]; then
+      rm -f "$body"
+      echo "$tag"
+      return
+    fi
+  fi
+  # Fallback: pick the first (newest) release from the list endpoint.
+  # This includes pre-releases, which is needed during early development.
+  local list_url="https://api.github.com/repos/${REPO}/releases"
+  fetch "$list_url" "$body"
   local tag
   tag="$(grep -o '"tag_name"[[:space:]]*:[[:space:]]*"[^"]*"' "$body" | head -n1 | sed 's/.*"\([^"]*\)"$/\1/')"
   rm -f "$body"
