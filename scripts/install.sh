@@ -149,7 +149,9 @@ if [[ "$VERSION" != v* ]]; then
   VERSION="v${VERSION}"
 fi
 
-read -r OS ARCH < <(detect_platform)
+OS_ARCH="$(detect_platform)"
+OS="${OS_ARCH%% *}"
+ARCH="${OS_ARCH##* }"
 
 PROJECT="sidetrail"
 EXT="tar.gz"
