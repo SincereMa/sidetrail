@@ -176,16 +176,15 @@ echo "install.sh: verifying checksum"
 verify_sha256 "$WORK/$ARCHIVE_NAME" "$WORK/checksums.txt"
 
 echo "install.sh: extracting"
-mkdir -p "$WORK/extract"
 case "$EXT" in
-  tar.gz) tar -xzf "$WORK/$ARCHIVE_NAME" -C "$WORK/extract" ;;
-  zip)    unzip -q "$WORK/$ARCHIVE_NAME" -d "$WORK/extract" ;;
+  tar.gz) tar -xzf "$WORK/$ARCHIVE_NAME" -C "$WORK" ;;
+  zip)    unzip -q "$WORK/$ARCHIVE_NAME" -d "$WORK" ;;
   *)      echo "install.sh: unsupported archive: $EXT" >&2; exit 69 ;;
 esac
 
 mkdir -p "$INSTALL_DIR"
 echo "install.sh: installing to $INSTALL_DIR/$PROJECT"
-install -m 0755 "$WORK/extract/$PROJECT" "$INSTALL_DIR/$PROJECT"
+install -m 0755 "$WORK/$PROJECT" "$INSTALL_DIR/$PROJECT"
 
 echo
 echo "sidetrail installed at: $INSTALL_DIR/$PROJECT"
