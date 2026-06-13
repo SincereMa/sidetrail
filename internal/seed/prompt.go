@@ -1,16 +1,17 @@
-// Package seed provides functions for bootstrapping SideTrail
-// records from existing project documents.
 package seed
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"strings"
 )
 
+const maxDocumentSize = 5000
+
 // GeneratePrompt reads the specified files and generates a structured prompt
 // for the host agent to extract decisions, constraints, and signals.
-func GeneratePrompt(files []string) (string, error) {
+func GeneratePrompt(_ context.Context, files []string) (string, error) {
 	if len(files) == 0 {
 		return "", fmt.Errorf("no files specified")
 	}
@@ -32,8 +33,8 @@ func GeneratePrompt(files []string) (string, error) {
 		}
 		builder.WriteString(fmt.Sprintf("### %s\n\n", file))
 		content := string(data)
-		if len(content) > 5000 {
-			content = content[:5000] + "\n... (truncated)"
+		if len(content) > maxDocumentSize {
+			content = content[:maxDocumentSize] + "\n... (truncated)"
 		}
 		builder.WriteString(content)
 		builder.WriteString("\n\n")
