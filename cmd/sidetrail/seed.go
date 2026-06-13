@@ -20,7 +20,7 @@ type seedOptions struct {
 	files  string
 	apply  string
 	dryRun bool
-	jsonO  bool
+	emitJSON bool
 }
 
 // newSeedCmd builds the `sidetrail seed` subcommand. It has two modes:
@@ -40,7 +40,7 @@ func newSeedCmd() *cobra.Command {
 	cmd.Flags().StringVar(&opts.files, "files", "", "glob pattern for project documents to read")
 	cmd.Flags().StringVar(&opts.apply, "apply", "", "file containing JSON array of records to apply")
 	cmd.Flags().BoolVar(&opts.dryRun, "dry-run", false, "show what would happen without writing")
-	cmd.Flags().BoolVar(&opts.jsonO, "json", false, "emit JSON output instead of text")
+	cmd.Flags().BoolVar(&opts.emitJSON, "json", false, "emit JSON output instead of text")
 	return cmd
 }
 
@@ -74,7 +74,7 @@ func runSeedFiles(cmd *cobra.Command, opts *seedOptions) error {
 		return err
 	}
 
-	if opts.jsonO {
+	if opts.emitJSON {
 		output := map[string]string{"prompt": prompt}
 		data, err := json.MarshalIndent(output, "", "  ")
 		if err != nil {
@@ -126,7 +126,7 @@ func runSeedApply(cmd *cobra.Command, opts *seedOptions) error {
 		}
 	}
 
-	if opts.jsonO {
+	if opts.emitJSON {
 		return seedApplyJSON(cmd, conflicts, nonConflicting, opts.dryRun)
 	}
 	return seedApplyTable(cmd, conflicts, nonConflicting, opts.dryRun)
