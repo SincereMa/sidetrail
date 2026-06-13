@@ -2,6 +2,7 @@
 package record
 
 import (
+	"encoding/json"
 	"strings"
 	"testing"
 	"time"
@@ -107,5 +108,78 @@ func TestNewIDMonotonic(t *testing.T) {
 	}
 	if a >= b {
 		t.Errorf("ids not increasing: %q >= %q", a, b)
+	}
+}
+
+// TestFillDefaultsID verifies that fillDefaults generates a ULID
+// when the id field is missing or empty.
+func TestFillDefaultsID(t *testing.T) {
+	input := []byte(`{"kind":"decision","scope":"x","subject":"y","reason":"z","source_type":"human","author":"a","status":"active"}`)
+	out, err := fillDefaults(input)
+	if err != nil {
+		t.Fatal(err)
+	}
+	var m map[string]any
+	if err := json.Unmarshal(out, &m); err != nil {
+		t.Fatal(err)
+	}
+	id, ok := m["id"].(string)
+	if !ok || id == "" {
+		t.Errorf("expected generated id, got %q", m["id"])
+	}
+	if len(id) != 26 {
+		t.Errorf("expected ULID length 26, got %d", len(id))
+	}
+}
+
+// TestFillDefaultsTimestamps verifies that fillDefaults sets
+// created_at, last_verified_at, and decided_at (for decisions)
+// when they are missing.
+func TestFillDefaultsTimestamps(t *testing.T) {
+	input := []byte(`{"kind":"decision","scope":"x","subject":"y","reason":"z","source_type":"human","author":"a","status":"active"}`)
+	out, err := fillDefaults(input)
+	if err != nil {
+		t.Fatal(err)
+	}
+	var m map[string]any
+	if err := json.Unmarshal(out, &m); err != nil {
+		t.Fatal(err)
+	}
+	for _, field := range []string{"created_at", "last_verified_at", "decided_at"} {
+		if _, ok := m[field]; !ok {
+			t.Errorf("expected %q to be set", field)
+		}
+	}
+}
+
+// TestFillDefaultsDoesNotOverwrite verifies that fillDefaults does
+// not overwrite fields that are already present.
+func TestFillDefaultsDoesNotOverwrite(t *testing.T) {
+	input := []byte(`{
+		"id": "MYCUSTOMID123",
+		"kind": "decision",
+		"scope": "x",
+		"subject": "y",
+		"reason": "z",
+		"source_type": "human",
+		"author": "a",
+		"created_at": "2020-01-01T00:00:00Z",
+		"last_verified_at": "2020-01-01T00:00:00Z",
+		"decided_at": "2020-01-01T00:00:00Z",
+		"status": "active"
+	}`)
+	out, err := fillDefaults(input)
+	if err != nil {
+		t.Fatal(err)
+	}
+	var m map[string]any
+	if err := json.Unmarshal(out, &m); err != nil {
+		t.Fatal(err)
+	}
+	if m["id"] != "MYCUSTOMID123" {
+		t.Errorf("expected id preserved, got %q", m["id"])
+	}
+	if m["created_at"] != "2020-01-01T00:00:00Z" {
+		t.Errorf("expected created_at preserved, got %q", m["created_at"])
 	}
 }
