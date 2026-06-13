@@ -1,0 +1,12 @@
+{
+  "id": "01KV0FPMCCC5SZMPYVKHQNG6TC",
+  "kind": "constraint",
+  "scope": ".",
+  "subject": "Do not invent install steps that do not run",
+  "reason": "AGENTS.md rule: until install is implemented, link to actual command in README or script",
+  "source_type": "human",
+  "author": "maintainer",
+  "created_at": "2026-06-13T00:00:00Z",
+  "last_verified_at": "2026-06-13T00:00:00Z",
+  "status": "active"
+}

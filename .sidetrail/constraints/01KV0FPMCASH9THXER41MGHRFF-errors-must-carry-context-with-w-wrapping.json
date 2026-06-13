@@ -1,0 +1,12 @@
+{
+  "id": "01KV0FPMCASH9THXER41MGHRFF",
+  "kind": "constraint",
+  "scope": ".",
+  "subject": "Errors must carry context with %w wrapping",
+  "reason": "Code convention: fmt.Errorf(\"read %q: %w\", path, err) — use %w, not %v, when wrapping",
+  "source_type": "human",
+  "author": "maintainer",
+  "created_at": "2026-06-13T00:00:00Z",
+  "last_verified_at": "2026-06-13T00:00:00Z",
+  "status": "active"
+}

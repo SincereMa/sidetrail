@@ -1,0 +1,12 @@
+{
+  "id": "01KV0F839XKX2339QVB2BHJJPF",
+  "kind": "decision",
+  "scope": "docs/agents/",
+  "subject": "Use CLAUDE.md as universal agent instruction format",
+  "reason": "CLAUDE.md is widely supported across agents; derived files in docs/agents/ handle format differences for specific agents",
+  "source_type": "human",
+  "author": "maintainer",
+  "created_at": "2026-06-13T00:00:00Z",
+  "last_verified_at": "2026-06-13T00:00:00Z",
+  "status": "active"
+}

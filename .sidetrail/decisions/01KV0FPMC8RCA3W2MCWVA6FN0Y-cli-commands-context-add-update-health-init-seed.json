@@ -1,0 +1,12 @@
+{
+  "id": "01KV0FPMC8RCA3W2MCWVA6FN0Y",
+  "kind": "decision",
+  "scope": "cmd/sidetrail/root.go",
+  "subject": "CLI commands: context, add, update, health, init, seed",
+  "reason": "Simplified from 13 to 7 agent-driven commands; each subcommand lives in its own file under cmd/sidetrail/",
+  "source_type": "human",
+  "author": "maintainer",
+  "created_at": "2026-06-13T00:00:00Z",
+  "last_verified_at": "2026-06-13T00:00:00Z",
+  "status": "active"
+}

@@ -1,0 +1,12 @@
+{
+  "id": "01KV0FPMCCRNAPWMP36WSZWSWX",
+  "kind": "constraint",
+  "scope": ".",
+  "subject": "Do not document features that do not exist",
+  "reason": "AGENTS.md rule: a markdown claim must be backed by code that runs",
+  "source_type": "human",
+  "author": "maintainer",
+  "created_at": "2026-06-13T00:00:00Z",
+  "last_verified_at": "2026-06-13T00:00:00Z",
+  "status": "active"
+}

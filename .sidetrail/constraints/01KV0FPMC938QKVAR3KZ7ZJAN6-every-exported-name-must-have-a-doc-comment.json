@@ -1,0 +1,12 @@
+{
+  "id": "01KV0FPMC938QKVAR3KZ7ZJAN6",
+  "kind": "constraint",
+  "scope": ".",
+  "subject": "Every exported name must have a doc comment",
+  "reason": "Code convention from docs/code-conventions.md: // ValidateRecord reports whether..., not // Validates a record.",
+  "source_type": "human",
+  "author": "maintainer",
+  "created_at": "2026-06-13T00:00:00Z",
+  "last_verified_at": "2026-06-13T00:00:00Z",
+  "status": "active"
+}

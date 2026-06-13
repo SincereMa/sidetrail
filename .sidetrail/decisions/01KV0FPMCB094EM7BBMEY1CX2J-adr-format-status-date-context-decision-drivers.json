@@ -1,0 +1,12 @@
+{
+  "id": "01KV0FPMCB094EM7BBMEY1CX2J",
+  "kind": "decision",
+  "scope": "docs/decisions/",
+  "subject": "ADR format: status, date, context, decision drivers, decision, consequences",
+  "reason": "Standard ADR template ensures consistency; all ADRs link from PR and must follow AGENTS.md rules",
+  "source_type": "human",
+  "author": "maintainer",
+  "created_at": "2026-06-06T00:00:00Z",
+  "last_verified_at": "2026-06-13T00:00:00Z",
+  "status": "active"
+}
