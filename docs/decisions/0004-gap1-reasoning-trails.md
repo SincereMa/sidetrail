@@ -1,10 +1,15 @@
 # ADR-0004: Gap 1 — Reasoning trails
 
-- **Status:** Accepted
+- **Status:** Accepted (see note below)
 - **Date:** 2026-06-06
 - **Supersedes:** —
 - **Superseded by:** —
 - **Maintained by:** ADR-0001 (Memory model and I/O surface)
+
+> **Note (2026-06-13):** The `supersede` command has been replaced
+> by `update`. To supersede a record: add a new record with
+> `supersedes` field, then update the old record's status.
+> See [README.md](../../README.md).
 
 ## Context and background
 

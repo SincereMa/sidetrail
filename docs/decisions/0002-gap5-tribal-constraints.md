@@ -1,10 +1,14 @@
 # ADR-0002: Tribal constraints (gap 5) — record kinds 0 and boundaries
 
-- **Status:** Accepted
+- **Status:** Accepted (see note below)
 - **Date:** 2026-06-06
 - **Supersedes:** —
 - **Superseded by:** —
 - **Maintained by:** ADR-0001 (Memory model and I/O surface)
+
+> **Note (2026-06-13):** The `_seed/` directory and `promote` workflow
+> have been removed. The CLI now has 5 commands: `context`, `add`,
+> `update`, `health`, `init`. See [README.md](../../README.md).
 
 ## Context and background
 

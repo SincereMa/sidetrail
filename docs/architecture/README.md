@@ -25,26 +25,18 @@ decisions that shaped the current shape are in
 
 ## Feature inventory
 
-The CLI exposes one root command (`sidetrail`) and thirteen
-subcommands. Every subcommand lives in its own file under
-`cmd/sidetrail/` and is wired in
+The CLI exposes one root command (`sidetrail`) and five
+agent-driven subcommands. Every subcommand lives in its own file
+under `cmd/sidetrail/` and is wired in
 [`cmd/sidetrail/root.go:20`](../../cmd/sidetrail/root.go).
 
 | # | Subcommand | Read / write | Primary behaviour | Key collaborators |
 | --- | --- | --- | --- | --- |
-| 1 | `init` | write | Scrape the canonical project paths (README, CONTRIBUTING, AGENTS, CLAUDE, LICENSE, RUNBOOK, `docs/adr*`, `docs/decisions`, `docs/architecture`, `.github/PULL_REQUEST_TEMPLATE.md`, `.github/ISSUE_TEMPLATE`) and write one seed record per existing file under `.sidetrail/_seed/`. The store is usable from empty; `init` is optional. | `record.NewID`, `storage.WriteSeed`, `--no-write` dry run. |
-| 2 | `validate` | read / check | Validate one or more record files against the embedded JSON Schema. Reports per-file `ok` / `fail`; non-zero exit on any failure. | `schema.ValidateRecord`. |
-| 3 | `add` | write | Read a record file, validate it, and write it to the store. Idempotency-guarded: a second add of the same id is an error. | `record.LoadFile`, `storage.Write`. |
-| 4 | `get` | read | Fetch a record by id with exact match first, then unique prefix match. Multi-match prefixes are reported as ambiguous. | `storage.Get`. |
-| 5 | `list` | read | Enumerate records newest first; optional `--kind` filter (unknown kind is rejected, not silently widened); optional `--limit`. | `storage.ListAll`, `storage.ListKind`. |
-| 6 | `ask` | read | Structured scope-pattern query. Returns records whose scope equals the pattern or is a strict descendant of it, optionally filtered by kind and tag, newest first, capped by limit. | `storage.Ask`, `record.MatchScope`. |
-| 7 | `context` | read | File-anchored aggregate. Returns the records whose scope equals the file path or any of its ancestor directories, up to `--radius` levels. | `storage.ContextFor`. |
-| 8 | `verify` | write | Refresh a record's `last_verified_at` to the current UTC second. The on-disk path is unchanged because the slug is derived from the (unchanged) subject. | `storage.Get`, `storage.Write`. |
-| 9 | `supersede` | write (two-record) | Mark an old record as superseded and write a new replacement in the same transaction. The old record's `status` becomes `superseded` and its `superseded_by` is set; the new record's `supersedes` is set to the old id (unless the input file already provided one). | `record.LoadFile`, `storage.Get`, `storage.Write`. |
-| 10 | `promote` | write | Move seed records from `_seed/` into the appropriate kind directory. Supports `--all`, explicit ID prefix matching, and a listing mode (`--list`). | `storage.Get`, `storage.Write`, `storage.PromoteSeed`. |
-| 11 | `draft` | write | Create a schema-valid draft record in `_draft/` for human review. The draft is a complete record file that can be promoted to the main store. | `record.NewID`, `storage.WriteDraft`. |
-| 12 | `status` | write | Transition a record's status field. Validates transitions per kind (e.g. active → archived, active → hidden). Supports `--dry-run`. | `storage.Get`, `storage.Write`. |
-| 13 | `health` | read | Scan the store and report project health signals: record counts by kind/status, unique scopes, active supersede chains, stale records. Supports `--json` and `--stale-days`. | `storage.ListAll`. |
+| 1 | `init` | write | Create a `.sidetrail/` directory at the project root. The store is usable from empty; `init` is optional. | `resolveProjectRoot`, `os.MkdirAll`. |
+| 2 | `add` | write | Read a record file, validate it, and write it to the store. Idempotency-guarded: a second add of the same id is an error. | `record.LoadFile`, `storage.Write`. |
+| 3 | `update` | write | Update an existing record with partial JSON fields. Reads the current record, merges provided fields, and writes it back. | `storage.Get`, `json.Unmarshal`, `storage.Write`. |
+| 4 | `context` | read | File-anchored aggregate. Returns the records whose scope equals the file path or any of its ancestor directories, up to `--radius` levels. | `storage.ContextFor`. |
+| 5 | `health` | read | Scan the store and report project health signals: record counts by kind/status, unique scopes, active supersede chains, stale records. Supports `--json` and `--stale-days`. | `storage.ListAll`. |
 
 ### Cross-cutting capabilities
 
@@ -68,10 +60,7 @@ subcommands. Every subcommand lives in its own file under
 - **On-disk layout.** `<root>/<kinddir>/<id>-<slug>.json`,
   one file per record. The five kind directories are
   `decisions/`, `constraints/`, `signals/`, `experiments/`,
-  `incidents/`. A sixth directory, `_seed/`, holds scrape-
-  derived candidates that have not been promoted to a real
-  record yet. A seventh directory, `_draft/`, holds draft
-  records created by `sidetrail draft` for human review.
+  `incidents/`.
 - **Atomic writes.** `storage.writeToDir` writes to
   `<path>.tmp` and `os.Rename`s it into place. A failed
   rename cleans up the temp file.

@@ -203,13 +203,9 @@ Beyond the ADRs, these are conventions that span the codebase:
 - File-on-disk formats are versioned by the directory layout
   itself. Adding a new field to a record is non-breaking; adding
   a new directory is a new ADR.
-- The four data structures (`record`, `edge`, `signal`, `drift`)
-  each get their own package and their own `.sidetrail/`
-  subdirectory. They share metadata conventions but not schema.
-- A `.sidetrail/_seed/`, `_proposed/`, or `_derived/` subdirectory
-  holds machine-claimed records. They never appear in
-  `sidetrail ask` results without an explicit `--include-seed`
-  flag.
+- The five record kinds (`decision`, `constraint`, `signal`,
+  `experiment`, `incident`) each get their own subdirectory under
+  `.sidetrail/`. They share metadata conventions but not schema.
 - Cross-platform discipline is enforced in review. A PR that
   uses `os/exec` with a shell, hard-codes a path separator, or
   reaches for `syscall` is rejected even if the tests pass.

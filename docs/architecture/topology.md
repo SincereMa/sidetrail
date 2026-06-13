@@ -21,17 +21,9 @@ graph TD
     ROOT[root.go<br/>Execute / newRootCmd]
     SR["store_root.go<br/>storeDirName=.sidetrail<br/>findStoreRoot / resolveStoreRoot"]
     INIT[init.go]
-    VAL[validate.go]
     ADD[add.go]
-    GET[get.go]
-    LIST[list.go]
-    ASK[ask.go]
+    UPDATE[update.go]
     CTX[context.go]
-    VER[verify.go]
-    SUP[supersede.go]
-    PROMOTE[promote.go]
-    DRAFT[draft.go]
-    STATUS[status.go]
     HEALTH[health.go]
   end
 
@@ -43,7 +35,7 @@ graph TD
   end
 
   subgraph Storage[Storage layer - internal/storage]
-    STO[store.go<br/>Store: Write / WriteSeed / WriteDraft / Read /<br/>List / ListAll / ListKind / Get /<br/>Ask / ContextFor]
+    STO[store.go<br/>Store: Write / Read /<br/>List / ListAll / ListKind / Get /<br/>Ask / ContextFor]
   end
 
   subgraph Schema[Schema layer - internal/schema]
@@ -67,24 +59,12 @@ graph TD
   MAIN --> ROOT
   ROOT --> COBRA
   ROOT --> VERP
-  ROOT --> INIT & VAL & ADD & GET & LIST & ASK & CTX & VER & SUP & PROMOTE & DRAFT & STATUS & HEALTH
+  ROOT --> INIT & ADD & UPDATE & CTX & HEALTH
 
   INIT --> SR
-  INIT --> REC
-  INIT --> STO
-  VAL  --> SCH
   ADD  --> LOAD & SR & STO
-  GET  --> SR & STO
-  LIST --> SR & STO
-  LIST --> REC
-  ASK  --> SR & STO
+  UPDATE --> SR & STO
   CTX  --> SR & STO
-  VER  --> SR & STO
-  SUP  --> LOAD & SR & STO
-  SUP  --> REC
-  PROMOTE --> SR & STO & REC
-  DRAFT --> SR & STO & REC
-  STATUS --> SR & STO
   HEALTH --> SR & STO & REC
 
   LOAD --> SCH
@@ -118,9 +98,6 @@ graph TD
   (where `.sidetrail/` will be created), not at the
   `.sidetrail/` directory itself, because the directory
   does not exist on first run.
-- **`verify` truncates to whole seconds** before writing.
-  The timestamp printed to stdout and the timestamp written
-  into the record JSON are the same string, byte for byte.
 - **`ContextFor` does not interpret glob patterns.** Its
   candidate scopes are derived from a fixed ancestor walk,
   so plain equality on each candidate is sufficient to

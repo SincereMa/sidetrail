@@ -26,26 +26,22 @@ func newRootCmd() *cobra.Command {
 long-lived context (decisions, constraints, signals, dependencies) and
 makes it available to host agents before they act.
 
-It is intentionally read-dominant: most calls ask a question; a few
-write a record.`,
+Commands:
+  context  — read records relevant to a file
+  add      — validate and store a record
+  update   — update an existing record
+  health   — report project health signals
+  init     — create a .sidetrail/ directory`,
 		SilenceUsage:  true,
 		SilenceErrors: true,
 	}
 	cmd.SetVersionTemplate("sidetrail {{.Version}} (commit " + version.Commit + ")\n")
 	cmd.AddCommand(
-		newValidateCmd(),
 		newAddCmd(),
-		newGetCmd(),
-		newListCmd(),
-		newAskCmd(),
 		newContextCmd(),
-		newVerifyCmd(),
-		newSupersedeCmd(),
-		newInitCmd(),
-		newPromoteCmd(),
-		newDraftCmd(),
-		newStatusCmd(),
+		newUpdateCmd(),
 		newHealthCmd(),
+		newInitCmd(),
 	)
 	return cmd
 }

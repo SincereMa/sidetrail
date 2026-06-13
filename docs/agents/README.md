@@ -23,9 +23,9 @@ Each adapter document describes:
 
 - The integration point (skill, MCP server, AGENTS.md linkage, etc.)
 - How the host agent discovers and loads the SideTrail context
-- The commands the host agent is allowed to run (`sidetrail ask`,
-  `sidetrail get`, `sidetrail list`, `sidetrail context`)
-- What the host agent must never do (write records, inject context
-  automatically, etc.)
+- The commands the host agent is allowed to run (`sidetrail context`,
+  `sidetrail add`, `sidetrail update`, `sidetrail health`)
+- What the host agent must never do (modify `.sidetrail/` directly,
+  inject context automatically, etc.)
 
 The adapter does not modify the host agent. It runs alongside it.

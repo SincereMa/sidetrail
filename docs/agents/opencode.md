@@ -104,7 +104,7 @@ constraints that the agent would otherwise miss.
 When the agent is asked "what do we know about billing?", it runs:
 
 ```sh
-sidetrail ask --scope billing --kind decision --json
+sidetrail context --file billing/handler.go --json
 ```
 
 And gets structured output it can reason about.
@@ -116,13 +116,7 @@ While reading `/audit/handler.go`, the agent notices a call to
 The agent asks:
 
 ```sh
-sidetrail get 01J...  # if it knows the id
-```
-
-or:
-
-```sh
-sidetrail ask --scope audit/handler --kind constraint --json
+sidetrail context --file audit/handler.go --json
 ```
 
 The agent gets a decision record explaining the `Rmq()` call
@@ -133,9 +127,8 @@ and the reason it exists.
 When a human asks the agent to do something, the agent must:
 
 - ✅ Read relevant files via `sidetrail context --file ...`.
-- ✅ Query by kind and scope via `sidetrail ask --scope ...`.
-- ✅ List recent decisions via `sidetrail list --limit 10`.
-- ✅ Validate a draft record via `sidetrail validate <file>`.
+- ✅ Record decisions via `sidetrail add <json-file>`.
+- ✅ Update records via `sidetrail update <id> --file <json>`.
 - ✅ Check if the binary is installed via `sidetrail --version`.
 
 The agent must never:
@@ -144,7 +137,6 @@ The agent must never:
   the human initiates.
 - ❌ Reload skill files mid-run. Skills are loaded once per
   session.
-- ❌ Call `sidetrail add` directly. That is the human's job.
 - ❌ Run anything against hashed skill files. The human writes
   the skill file.
 

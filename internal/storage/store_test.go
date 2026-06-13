@@ -482,25 +482,4 @@ func TestContextForEmptyFile(t *testing.T) {
 
 // TestWriteSeed confirms a record is written under
 // .sidetrail/_seed/ and is NOT returned by ListAll (which only
-// walks the canonical kind directories).
-func TestWriteSeed(t *testing.T) {
-	s := newStore(t)
-	r := sampleRecord(t, record.KindDecision)
-	r.SourceType = record.SourceScrape
-	r.Author = "sidetrail init"
 
-	path, err := s.WriteSeed(r)
-	if err != nil {
-		t.Fatal(err)
-	}
-	if !strings.Contains(path, string(filepath.Separator)+"_seed"+string(filepath.Separator)) {
-		t.Errorf("expected path under _seed/, got %q", path)
-	}
-	all, err := s.ListAll()
-	if err != nil {
-		t.Fatal(err)
-	}
-	if len(all) != 0 {
-		t.Errorf("seed should not appear in ListAll, got %d records", len(all))
-	}
-}

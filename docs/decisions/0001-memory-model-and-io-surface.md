@@ -1,10 +1,16 @@
 # ADR-0001: Memory model and I/O surface
 
-- **Status:** Accepted
+- **Status:** Accepted (see note below)
 - **Date:** 2026-06-06
 - **Supersedes:** —
 - **Superseded by:** —
 - **Maintains:** This is the first ADR and establishes the memory model half of the full ADR half-follow.
+
+> **Note (2026-06-13):** The CLI surface has been simplified from
+> 13 subcommands to 5 agent-driven commands: `context`, `add`,
+> `update`, `health`, `init`. The `_seed/` and `_draft/` directories
+> have been removed. See [README.md](../../README.md) for the
+> current CLI surface.
 
 ## Context and background
 
