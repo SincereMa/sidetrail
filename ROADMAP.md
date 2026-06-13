@@ -13,12 +13,14 @@ This document records the current implementation status, the work that remains, 
 - On-disk record model implemented with one JSON file per record.
 - JSON schema validation implemented and embedded in `internal/schema`.
 - Record ID generation using ULID and stable slug-based file naming.
-- Agent-driven CLI surface with five commands:
+- Agent-driven CLI surface with seven commands:
   - `context` — read records relevant to a file
   - `add` — validate and store a record
   - `update` — update an existing record with partial JSON
   - `health` — report project health signals
   - `init` — create a `.sidetrail/` directory
+  - `seed --files` — generate agent prompt from project documents
+  - `seed --apply` — apply agent-generated records with conflict detection
 - Record kinds supported: `decisions`, `constraints`, `signals`, `experiments`, `incidents`.
 - Scope and product problem statements exist in `docs/scope.md`.
 - Contributor and agent design principles exist in `AGENTS.md`.
@@ -31,6 +33,9 @@ This document records the current implementation status, the work that remains, 
 - `cmd/sidetrail/update.go`: partial record updates via JSON merge.
 - `cmd/sidetrail/health.go`: project health signals, stale detection, JSON output.
 - `cmd/sidetrail/init.go`: create `.sidetrail/` directory.
+- `cmd/sidetrail/seed.go`: seed command with --files and --apply modes.
+- `internal/seed/prompt.go`: prompt generation from project documents.
+- `internal/seed/conflict.go`: conflict detection by scope+subject matching.
 - `internal/storage/store.go`: atomic write, list, get, context, prefix resolution.
 - `internal/record/record.go`: record model, enums, slug hashing, ULID entropy.
 

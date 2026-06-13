@@ -12,6 +12,8 @@ project root.
 | Command | Purpose | Example |
 |---------|---------|--------|
 | `sidetrail init` | Initialize store | `sidetrail init` |
+| `sidetrail seed --files <glob>` | Generate agent prompt from docs | `sidetrail seed --files "./docs/**/*.md"` |
+| `sidetrail seed --apply <file>` | Apply generated records | `sidetrail seed --apply records.json` |
 | `sidetrail context --file <path>` | Get records for a file | `sidetrail context --file src/auth/handler.go` |
 | `sidetrail add <file.json>` | Create a record | `sidetrail add decision.json` |
 | `sidetrail update <id> --file <file.json>` | Update a record | `sidetrail update 01HXYZ... --file update.json` |
@@ -104,6 +106,26 @@ meaningful choice, constraint, or lesson — not for routine edits.
   "resolved_at": "2026-01-16T00:00:00Z"
 }
 ```
+
+### When integrating SideTrail into an existing project
+
+Use the seed command to bootstrap records from project documents:
+
+```bash
+# Step 1: Generate a prompt for the agent to extract records
+sidetrail seed --files "./docs/**/*.md"
+
+# Step 2: Agent processes the prompt and generates records.json
+
+# Step 3: Apply the generated records (dry run first)
+sidetrail seed --apply records.json --dry-run
+sidetrail seed --apply records.json
+```
+
+The seed command detects conflicts when applying records:
+- Same kind + overlapping scope + similar subject = conflict
+- Conflicts are reported but not automatically resolved
+- Use `--dry-run` to preview before writing
 
 ### When starting a new session
 
