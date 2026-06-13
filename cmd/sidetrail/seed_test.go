@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 	"time"
 
@@ -239,6 +240,77 @@ func TestSeed_ApplyJSON(t *testing.T) {
 	}
 	if len(output.NonConflicting) != 1 {
 		t.Errorf("expected 1 non-conflicting record, got %d", len(output.NonConflicting))
+	}
+}
+
+func TestSeed_ApplyWithConflict(t *testing.T) {
+	dir := t.TempDir()
+	root := filepath.Join(dir, ".sidetrail")
+	os.MkdirAll(root, 0755)
+
+	existing := map[string]interface{}{
+		"id":               "existing-1",
+		"kind":             "decision",
+		"scope":            "src/auth",
+		"subject":          "Use bcrypt",
+		"reason":           "Old decision",
+		"source_type":      "human",
+		"author":           "test",
+		"created_at":       "2026-01-01T00:00:00Z",
+		"last_verified_at": "2026-01-01T00:00:00Z",
+		"status":           "active",
+	}
+	existingData, _ := json.Marshal(existing)
+	existingFile := filepath.Join(root, "decisions", "existing-1-use-bcrypt.json")
+	os.MkdirAll(filepath.Dir(existingFile), 0755)
+	if err := os.WriteFile(existingFile, existingData, 0644); err != nil {
+		t.Fatal(err)
+	}
+
+	candidates := []map[string]interface{}{
+		{
+			"kind":             "decision",
+			"scope":            "src/auth",
+			"subject":          "Use bcrypt for hashing",
+			"reason":           "New decision",
+			"source_type":      "derived",
+			"author":           "agent",
+			"created_at":       "2026-01-02T00:00:00Z",
+			"last_verified_at": "2026-01-02T00:00:00Z",
+			"status":           "active",
+		},
+	}
+	data, _ := json.Marshal(candidates)
+	recordsFile := filepath.Join(dir, "records.json")
+	if err := os.WriteFile(recordsFile, data, 0644); err != nil {
+		t.Fatal(err)
+	}
+
+	cmd := newRootCmd()
+	buf := new(bytes.Buffer)
+	cmd.SetOut(buf)
+	cmd.SetErr(buf)
+	cmd.SetArgs([]string{"seed", "--apply", recordsFile, "--root", root})
+
+	if err := cmd.Execute(); err != nil {
+		t.Fatalf("seed --apply: %v", err)
+	}
+
+	output := buf.String()
+	if !strings.Contains(output, "Conflicts found: 1") {
+		t.Errorf("expected conflict message, got: %s", output)
+	}
+	if !strings.Contains(output, "existing-1") {
+		t.Errorf("expected existing record ID in output, got: %s", output)
+	}
+
+	store := storage.NewStore(root)
+	all, err := store.ListAll()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(all) != 1 {
+		t.Errorf("expected 1 record (conflict prevented add), got %d", len(all))
 	}
 }
 
