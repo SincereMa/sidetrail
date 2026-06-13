@@ -125,6 +125,7 @@ verify it against the matching `*_checksums.txt`, and place the
 | Path | Purpose |
 | --- | --- |
 | `AGENTS.md` | Mission, principles, and pointers for contributors and host agents. |
+| `CLAUDE.md` | Universal agent instructions — tells agents when/how to use SideTrail. |
 | `LICENSE` | MIT license terms. |
 | `CODE_OF_CONDUCT.md` | Community expectations. |
 | `CONTRIBUTING.md` | How to file issues and submit changes. |

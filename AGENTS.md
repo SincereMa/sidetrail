@@ -10,9 +10,10 @@ Mission and pitch: [README.md](./README.md). This file is the
   on-disk store (`.sidetrail/`). Tests and CI are in place.
 - **Stack chosen.** Go + Cobra + JSON Schema (Draft 2020-12)
   + ULID + GoReleaser. See [ADR-0003](docs/decisions/0003-technology-stack.md).
-- **Host-agent adapter not yet implemented.** Adapter guidance
-  exists in [docs/agents/](docs/agents/); no executable adapter
-  code yet.
+- **Universal agent instructions.** `CLAUDE.md` provides
+  project-level instructions for any agent. `docs/agents/opencode/skill/SKILL.md`
+  provides OpenCode-specific skill integration. See
+  [docs/agents/](docs/agents/) for adapter documentation.
 
 ## Hard constraints (non-negotiable)
 

@@ -1,31 +1,38 @@
-# Per-host-agent adapter specifications
+# Agent Adapters
 
-This directory holds the adapter specifications for host agents
-that SideTrail integrates with. Each adapter is a self-contained
-document that describes how the host agent should use SideTrail.
+SideTrail serves AI coding agents through universal instruction files.
+The behavioral rules are identical across agents — only the file format differs.
 
-See [AGENTS.md](../../AGENTS.md) for the universal constraints
-that apply to all adapters.
+## Files
 
-## Available adapters
+| File | Purpose | Audience |
+|------|---------|----------|
+| `CLAUDE.md` | Project-level instructions | Any agent that reads project files |
+| `opencode/skill/SKILL.md` | OpenCode skill file | OpenCode agents |
+| `opencode.md` | OpenCode-specific notes | OpenCode users |
 
-| Host agent | Adapter | Adapter type |
-| --- | --- | --- |
-| [OpenCode](opencode.md) | Skill (on-demand) + `AGENTS.md` linkage | CLI-based, read-only |
+## How It Works
 
-Future adapters will follow the same pattern: a document in
-`docs/agents/<host>.md` and, where applicable, a skill or
-configuration file under `docs/agents/<host>/`.
+1. Agent reads `CLAUDE.md` (or loads `SKILL.md` as a skill)
+2. Instructions tell the agent when/how to use SideTrail commands
+3. Agent calls `sidetrail` CLI commands via shell
+4. Records are stored in `.sidetrail/` as JSON files
 
-## What each adapter includes
+## Adding Support for a New Agent
 
-Each adapter document describes:
+To add SideTrail support for a new agent:
 
-- The integration point (skill, MCP server, AGENTS.md linkage, etc.)
-- How the host agent discovers and loads the SideTrail context
-- The commands the host agent is allowed to run (`sidetrail context`,
-  `sidetrail add`, `sidetrail update`, `sidetrail health`)
-- What the host agent must never do (modify `.sidetrail/` directly,
-  inject context automatically, etc.)
+1. Check if the agent reads `CLAUDE.md` — if yes, it already works
+2. If the agent uses a different instruction format, create a derived file
+   in `docs/agents/` that reformats the CLAUDE.md content
+3. Update this README to list the new adapter
 
-The adapter does not modify the host agent. It runs alongside it.
+## Migration
+
+For projects without SideTrail:
+1. Run `sidetrail init`
+2. Agent reads CLAUDE.md and starts following instructions
+
+For projects with SideTrail but no instructions:
+1. Copy CLAUDE.md to the project root
+2. Agent picks up instructions on next session
