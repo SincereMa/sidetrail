@@ -31,7 +31,8 @@ Commands:
   add      — validate and store a record
   update   — update an existing record
   health   — report project health signals
-  init     — create a .sidetrail/ directory`,
+  init     — create a .sidetrail/ directory
+  seed     — seed records from documents or apply agent output`,
 		SilenceUsage:  true,
 		SilenceErrors: true,
 	}
@@ -42,6 +43,7 @@ Commands:
 		newUpdateCmd(),
 		newHealthCmd(),
 		newInitCmd(),
+		newSeedCmd(),
 	)
 	return cmd
 }
