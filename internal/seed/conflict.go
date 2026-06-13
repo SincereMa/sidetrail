@@ -3,6 +3,7 @@
 package seed
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/SincereMa/sidetrail/internal/record"
@@ -19,10 +20,10 @@ type Conflict struct {
 // DetectConflicts compares candidate records against the store and
 // returns conflicts (same kind + overlapping scope + similar
 // subject) and non-conflicting records.
-func DetectConflicts(store *storage.Store, candidates []*record.Record) ([]Conflict, []*record.Record) {
+func DetectConflicts(store *storage.Store, candidates []*record.Record) ([]Conflict, []*record.Record, error) {
 	existing, err := store.ListAll()
 	if err != nil {
-		return nil, candidates
+		return nil, nil, fmt.Errorf("list all records: %w", err)
 	}
 
 	var conflicts []Conflict
@@ -37,7 +38,7 @@ func DetectConflicts(store *storage.Store, candidates []*record.Record) ([]Confl
 		}
 	}
 
-	return conflicts, nonConflicting
+	return conflicts, nonConflicting, nil
 }
 
 // findConflict checks if candidate conflicts with any existing
@@ -73,6 +74,9 @@ func scopeOverlaps(a, b string) bool {
 func subjectsMatch(a, b string) bool {
 	a = strings.ToLower(strings.TrimSpace(a))
 	b = strings.ToLower(strings.TrimSpace(b))
+	if a == "" || b == "" {
+		return a == b
+	}
 	if a == b {
 		return true
 	}
