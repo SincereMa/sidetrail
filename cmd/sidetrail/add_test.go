@@ -73,11 +73,10 @@ func TestAddOK(t *testing.T) {
 // with the schema error surfaced on the command's error path.
 func TestAddSchemaError(t *testing.T) {
 	cortexDir, recordFile := setupAddStore(t)
-	// Replace the file with one missing the kind-specific
-	// "decided_at" so the schema rejects it.
+	// Replace the file with one missing the required "kind" field
+	// so the schema rejects it.
 	if err := os.WriteFile(recordFile, []byte(`{
   "id": "01HW4F2N8X2JZPM7Q3S5V0K1A1",
-  "kind": "decision",
   "scope": "src/foo",
   "subject": "Use ULID for record ids",
   "reason": "test",

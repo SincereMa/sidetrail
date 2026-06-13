@@ -58,8 +58,17 @@ func TestLoadFileOK(t *testing.T) {
 // schema failure.
 func TestLoadFileSchemaError(t *testing.T) {
 	path := filepath.Join(t.TempDir(), "bad.json")
-	// Missing the kind-specific "decided_at".
-	if err := writeFile(path, strings.TrimSuffix(validDecisionJSON, ",\n  \"decided_at\": \"2026-01-01T00:00:00Z\"\n}")+"\n}"); err != nil {
+	// Missing the required "kind" field so the schema rejects it.
+	if err := writeFile(path, `{
+  "scope": "src/foo",
+  "subject": "Use ULID for record ids",
+  "reason": "test",
+  "source_type": "human",
+  "author": "tester",
+  "created_at": "2026-01-01T00:00:00Z",
+  "last_verified_at": "2026-01-01T00:00:00Z",
+  "status": "active"
+}`); err != nil {
 		t.Fatal(err)
 	}
 	_, err := LoadFile(path)
