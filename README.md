@@ -136,7 +136,7 @@ verify it against the matching `*_checksums.txt`, and place the
 
 ## CLI surface
 
-The `sidetrail` binary is agent-driven with five commands:
+The `sidetrail` binary is agent-driven with seven commands:
 
 | Command | Purpose |
 | --- | --- |
@@ -145,6 +145,8 @@ The `sidetrail` binary is agent-driven with five commands:
 | `sidetrail update <id> --file <json>` | Update an existing record |
 | `sidetrail health` | Report project health signals |
 | `sidetrail init` | Create a `.sidetrail/` directory |
+| `sidetrail seed --files <glob>` | Generate agent prompt from project documents |
+| `sidetrail seed --apply <file>` | Apply agent-generated records with conflict detection |
 
 The `.sidetrail/` store is discovered by walking upward from the
 current working directory unless `--root` points elsewhere. The
@@ -159,7 +161,19 @@ sidetrail init
 # Output: created /path/to/project/.sidetrail
 ```
 
-**2. Agent reads context before editing:**
+**2. Seed records from existing docs (optional):**
+
+```bash
+# Generate prompt for agent to extract records
+sidetrail seed --files "./docs/**/*.md"
+# Agent processes documents and generates records.json
+
+# Apply generated records (dry run first)
+sidetrail seed --apply records.json --dry-run
+sidetrail seed --apply records.json
+```
+
+**3. Agent reads context before editing:**
 
 ```bash
 sidetrail context --file src/auth/login.go
@@ -169,7 +183,7 @@ sidetrail context --file src/auth/login.go --json
 # Returns JSON for agent consumption
 ```
 
-**3. Agent records a decision:**
+**4. Agent records a decision:**
 
 ```bash
 cat > /tmp/record.json << 'EOF'
@@ -188,7 +202,7 @@ sidetrail add /tmp/record.json
 # Output: 01ARZ3NDEKTSV4RRFFQ69G5FAV
 ```
 
-**4. Agent records a constraint:**
+**5. Agent records a constraint:**
 
 ```bash
 cat > /tmp/constraint.json << 'EOF'
@@ -206,7 +220,7 @@ EOF
 sidetrail add /tmp/constraint.json
 ```
 
-**5. Agent supersedes a record:**
+**6. Agent supersedes a record:**
 
 ```bash
 # Write new record
@@ -233,7 +247,7 @@ EOF
 sidetrail update 01ARZ3NDEKTSV4RRFFQ69G5FAV --file /tmp/update-old.json
 ```
 
-**6. Check project health:**
+**7. Check project health:**
 
 ```bash
 sidetrail health
