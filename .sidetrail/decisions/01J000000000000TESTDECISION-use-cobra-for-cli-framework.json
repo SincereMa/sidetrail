@@ -1,0 +1,13 @@
+{
+  "id": "01J000000000000TESTDECISION",
+  "kind": "decision",
+  "scope": "cmd/sidetrail/",
+  "subject": "Use Cobra for CLI framework",
+  "reason": "Standard Go CLI framework, well-documented, cross-platform",
+  "source_type": "human",
+  "author": "sincere",
+  "created_at": "2026-06-13T00:00:00Z",
+  "last_verified_at": "2026-06-13T00:00:00Z",
+  "status": "active",
+  "decided_at": "2026-06-13T00:00:00Z"
+}

@@ -27,5 +27,5 @@ dist/
 *.out
 coverage.txt
 coverage.html
-.sidetrail/
+
 

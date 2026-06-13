@@ -1,0 +1,12 @@
+{
+  "id": "01KV0FPMC80A1NXBSXNZS6GYSA",
+  "kind": "decision",
+  "scope": "scripts/",
+  "subject": "Distribution: single binary + install script + package managers",
+  "reason": "macOS (Homebrew), Linux (deb/rpm/install script), Windows (Scoop/install.ps1); no DMG/MSI/pkg installers",
+  "source_type": "human",
+  "author": "maintainer",
+  "created_at": "2026-06-06T00:00:00Z",
+  "last_verified_at": "2026-06-13T00:00:00Z",
+  "status": "active"
+}

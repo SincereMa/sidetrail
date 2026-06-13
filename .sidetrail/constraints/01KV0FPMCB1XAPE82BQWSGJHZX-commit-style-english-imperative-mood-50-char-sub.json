@@ -1,0 +1,12 @@
+{
+  "id": "01KV0FPMCB1XAPE82BQWSGJHZX",
+  "kind": "constraint",
+  "scope": ".",
+  "subject": "Commit style: English, imperative mood, 50-char subject",
+  "reason": "Workflow convention from AGENTS.md: conventional-commit prefix encouraged (docs:, feat:, fix:, etc.)",
+  "source_type": "human",
+  "author": "maintainer",
+  "created_at": "2026-06-13T00:00:00Z",
+  "last_verified_at": "2026-06-13T00:00:00Z",
+  "status": "active"
+}
