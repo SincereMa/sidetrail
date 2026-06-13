@@ -668,6 +668,321 @@ func TestE2E_TagsPreservation(t *testing.T) {
 	}
 }
 
+// TestE2E_SeedFiles tests the seed --files command workflow:
+// create documents → seed files → verify prompt output.
+func TestE2E_SeedFiles(t *testing.T) {
+	root := e2eSetup(t)
+
+	// Create project documents
+	docsDir := filepath.Join(root, "docs")
+	if err := os.MkdirAll(docsDir, 0o755); err != nil {
+		t.Fatal(err)
+	}
+	readmeJSON := `# My Project
+
+## Architecture
+- Use bcrypt for password hashing
+- Do not modify billing code without approval
+`
+	archJSON := `# Architecture
+
+## Decisions
+- We chose Go for the backend
+- PostgreSQL for the database
+`
+	if err := os.WriteFile(filepath.Join(docsDir, "README.md"), []byte(readmeJSON), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(docsDir, "ARCHITECTURE.md"), []byte(archJSON), 0o644); err != nil {
+		t.Fatal(err)
+	}
+
+	// Seed files (text output)
+	out, err := e2eRunCmd(t, root, "seed", "--files", filepath.Join(docsDir, "*.md"))
+	if err != nil {
+		t.Fatalf("seed --files: %v\n%s", err, out)
+	}
+	if !strings.Contains(out, "# SideTrail Seed Prompt") {
+		t.Errorf("expected prompt header: %s", out)
+	}
+	if !strings.Contains(out, "README.md") {
+		t.Errorf("expected README.md in prompt: %s", out)
+	}
+	if !strings.Contains(out, "ARCHITECTURE.md") {
+		t.Errorf("expected ARCHITECTURE.md in prompt: %s", out)
+	}
+	if !strings.Contains(out, "Use bcrypt for password hashing") {
+		t.Errorf("expected document content in prompt: %s", out)
+	}
+
+	// Seed files (JSON output)
+	out, err = e2eRunCmd(t, root, "seed", "--files", filepath.Join(docsDir, "*.md"), "--json")
+	if err != nil {
+		t.Fatalf("seed --files --json: %v\n%s", err, out)
+	}
+	var result map[string]string
+	if err := json.Unmarshal([]byte(out), &result); err != nil {
+		t.Fatalf("invalid JSON output: %v\n%s", err, out)
+	}
+	if _, ok := result["prompt"]; !ok {
+		t.Errorf("JSON output missing 'prompt' key: %s", out)
+	}
+}
+
+// TestE2E_SeedApply tests the seed --apply command workflow:
+// prepare records JSON → seed apply → verify records in store.
+func TestE2E_SeedApply(t *testing.T) {
+	root := e2eSetup(t)
+
+	// Prepare candidate records
+	recordsJSON := `[
+		{
+			"kind": "decision",
+			"scope": "src/auth",
+			"subject": "Use bcrypt for hashing",
+			"reason": "Security best practice",
+			"source_type": "derived",
+			"author": "agent",
+			"created_at": "2026-06-13T00:00:00Z",
+			"last_verified_at": "2026-06-13T00:00:00Z",
+			"status": "active"
+		},
+		{
+			"kind": "constraint",
+			"scope": "src/billing",
+			"subject": "Do not modify billing",
+			"reason": "Compliance review pending",
+			"source_type": "derived",
+			"author": "agent",
+			"created_at": "2026-06-13T00:00:00Z",
+			"last_verified_at": "2026-06-13T00:00:00Z",
+			"status": "active"
+		}
+	]`
+	recordsFile := filepath.Join(root, "candidates.json")
+	if err := os.WriteFile(recordsFile, []byte(recordsJSON), 0o644); err != nil {
+		t.Fatal(err)
+	}
+
+	// Apply records (text output)
+	out, err := e2eRunCmd(t, root, "seed", "--apply", recordsFile)
+	if err != nil {
+		t.Fatalf("seed --apply: %v\n%s", err, out)
+	}
+	if !strings.Contains(out, "Records to add: 2") {
+		t.Errorf("expected 2 records to add: %s", out)
+	}
+
+	// Verify records were written
+	s := storage.NewStore(root)
+	all, err := s.ListAll()
+	if err != nil {
+		t.Fatalf("list: %v", err)
+	}
+	if len(all) != 2 {
+		t.Fatalf("expected 2 records in store, got %d", len(all))
+	}
+
+	// Verify context works for the seeded records
+	out, err = e2eRunCmd(t, root, "context", "--file", "src/auth/utils.go", "--json")
+	if err != nil {
+		t.Fatalf("context: %v\n%s", err, out)
+	}
+	var recs []*record.Record
+	if err := json.Unmarshal([]byte(out), &recs); err != nil {
+		t.Fatalf("context not JSON: %v", err)
+	}
+	if len(recs) != 1 {
+		t.Fatalf("expected 1 record for src/auth/utils.go, got %d", len(recs))
+	}
+	if recs[0].Subject != "Use bcrypt for hashing" {
+		t.Errorf("expected bcrypt decision, got %s", recs[0].Subject)
+	}
+}
+
+// TestE2E_SeedApplyDryRun tests that --dry-run does not write records.
+func TestE2E_SeedApplyDryRun(t *testing.T) {
+	root := e2eSetup(t)
+
+	recordsJSON := `[
+		{
+			"kind": "decision",
+			"scope": "src/test",
+			"subject": "Dry run test",
+			"reason": "test",
+			"source_type": "derived",
+			"author": "agent",
+			"created_at": "2026-06-13T00:00:00Z",
+			"last_verified_at": "2026-06-13T00:00:00Z",
+			"status": "active"
+		}
+	]`
+	recordsFile := filepath.Join(root, "candidates.json")
+	if err := os.WriteFile(recordsFile, []byte(recordsJSON), 0o644); err != nil {
+		t.Fatal(err)
+	}
+
+	// Dry run
+	out, err := e2eRunCmd(t, root, "seed", "--apply", recordsFile, "--dry-run")
+	if err != nil {
+		t.Fatalf("seed --apply --dry-run: %v\n%s", err, out)
+	}
+	if !strings.Contains(out, "DRY RUN") {
+		t.Errorf("expected DRY RUN message: %s", out)
+	}
+	if !strings.Contains(out, "Records to add: 1") {
+		t.Errorf("expected 1 record to add: %s", out)
+	}
+
+	// Verify no records were written
+	s := storage.NewStore(root)
+	all, err := s.ListAll()
+	if err != nil {
+		t.Fatalf("list: %v", err)
+	}
+	if len(all) != 0 {
+		t.Errorf("expected 0 records (dry run), got %d", len(all))
+	}
+}
+
+// TestE2E_SeedApplyWithConflict tests conflict detection during seed apply.
+func TestE2E_SeedApplyWithConflict(t *testing.T) {
+	root := e2eSetup(t)
+
+	// First, add an existing record
+	existingJSON := `{
+		"id": "e2e-seed-existing",
+		"kind": "decision",
+		"scope": "src/auth",
+		"subject": "Use bcrypt",
+		"reason": "Old decision",
+		"source_type": "human",
+		"author": "tester",
+		"created_at": "2026-06-01T00:00:00Z",
+		"last_verified_at": "2026-06-01T00:00:00Z",
+		"status": "active",
+		"decided_at": "2026-06-01T00:00:00Z"
+	}`
+	f := e2eWriteRecord(t, root, "existing.json", existingJSON)
+	if _, err := e2eRunCmd(t, root, "add", f); err != nil {
+		t.Fatalf("add existing: %v", err)
+	}
+
+	// Prepare a conflicting candidate
+	recordsJSON := `[
+		{
+			"kind": "decision",
+			"scope": "src/auth",
+			"subject": "Use bcrypt for hashing",
+			"reason": "Updated decision",
+			"source_type": "derived",
+			"author": "agent",
+			"created_at": "2026-06-13T00:00:00Z",
+			"last_verified_at": "2026-06-13T00:00:00Z",
+			"status": "active"
+		}
+	]`
+	recordsFile := filepath.Join(root, "candidates.json")
+	if err := os.WriteFile(recordsFile, []byte(recordsJSON), 0o644); err != nil {
+		t.Fatal(err)
+	}
+
+	// Apply with conflict
+	out, err := e2eRunCmd(t, root, "seed", "--apply", recordsFile)
+	if err != nil {
+		t.Fatalf("seed --apply: %v\n%s", err, out)
+	}
+	if !strings.Contains(out, "Conflicts found: 1") {
+		t.Errorf("expected conflict message: %s", out)
+	}
+	if !strings.Contains(out, "e2e-seed-existing") {
+		t.Errorf("expected existing record ID in output: %s", out)
+	}
+
+	// Verify only the original record exists (conflict prevented add)
+	s := storage.NewStore(root)
+	all, err := s.ListAll()
+	if err != nil {
+		t.Fatalf("list: %v", err)
+	}
+	if len(all) != 1 {
+		t.Errorf("expected 1 record (conflict prevented add), got %d", len(all))
+	}
+}
+
+// TestE2E_SeedApplyJSON tests seed --apply with --json output.
+func TestE2E_SeedApplyJSON(t *testing.T) {
+	root := e2eSetup(t)
+
+	recordsJSON := `[
+		{
+			"kind": "decision",
+			"scope": "src/json",
+			"subject": "JSON output test",
+			"reason": "test",
+			"source_type": "derived",
+			"author": "agent",
+			"created_at": "2026-06-13T00:00:00Z",
+			"last_verified_at": "2026-06-13T00:00:00Z",
+			"status": "active"
+		}
+	]`
+	recordsFile := filepath.Join(root, "candidates.json")
+	if err := os.WriteFile(recordsFile, []byte(recordsJSON), 0o644); err != nil {
+		t.Fatal(err)
+	}
+
+	// Apply with JSON output
+	out, err := e2eRunCmd(t, root, "seed", "--apply", recordsFile, "--json")
+	if err != nil {
+		t.Fatalf("seed --apply --json: %v\n%s", err, out)
+	}
+	var result struct {
+		DryRun         bool            `json:"dry_run"`
+		Conflicts      []interface{}   `json:"conflicts"`
+		NonConflicting []interface{}   `json:"non_conflicting"`
+	}
+	if err := json.Unmarshal([]byte(out), &result); err != nil {
+		t.Fatalf("invalid JSON output: %v\n%s", err, out)
+	}
+	if result.DryRun {
+		t.Error("expected dry_run=false")
+	}
+	if len(result.NonConflicting) != 1 {
+		t.Errorf("expected 1 non-conflicting record, got %d", len(result.NonConflicting))
+	}
+	if len(result.Conflicts) != 0 {
+		t.Errorf("expected 0 conflicts, got %d", len(result.Conflicts))
+	}
+}
+
+// TestE2E_SeedMutualExclusivity tests error cases for seed command.
+func TestE2E_SeedMutualExclusivity(t *testing.T) {
+	root := e2eSetup(t)
+
+	// Both --files and --apply
+	_, err := e2eRunCmd(t, root, "seed", "--files", "*.md", "--apply", "records.json")
+	if err == nil {
+		t.Error("expected error when both --files and --apply are provided")
+	}
+
+	// Neither --files nor --apply
+	_, err = e2eRunCmd(t, root, "seed")
+	if err == nil {
+		t.Error("expected error when neither --files nor --apply is provided")
+	}
+}
+
+// TestE2E_SeedNoMatchingFiles tests seed --files with no matching files.
+func TestE2E_SeedNoMatchingFiles(t *testing.T) {
+	root := e2eSetup(t)
+
+	_, err := e2eRunCmd(t, root, "seed", "--files", "*.nonexistent")
+	if err == nil {
+		t.Error("expected error for no matching files")
+	}
+}
+
 // TestE2E_TimeOrdering tests that context returns records newest first.
 func TestE2E_TimeOrdering(t *testing.T) {
 	root := e2eSetup(t)
