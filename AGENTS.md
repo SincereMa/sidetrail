@@ -5,7 +5,7 @@ Mission and pitch: [README.md](./README.md). This file is the
 
 ## Status
 
-- **v0 CLI implemented.** Go binary with 13 subcommands,
+- **v0 CLI implemented.** Go binary with 5 agent-driven commands,
   JSON schema validation, ULID record IDs, and an embedded
   on-disk store (`.sidetrail/`). Tests and CI are in place.
 - **Stack chosen.** Go + Cobra + JSON Schema (Draft 2020-12)

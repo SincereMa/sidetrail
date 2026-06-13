@@ -1,10 +1,12 @@
 package sidetrail
 
 import (
+	"encoding/json"
 	"fmt"
 
 	"github.com/spf13/cobra"
 
+	"github.com/SincereMa/sidetrail/internal/record"
 	"github.com/SincereMa/sidetrail/internal/storage"
 )
 
@@ -62,4 +64,23 @@ func runContext(cmd *cobra.Command, _ []string, opts *contextOptions) error {
 	}
 	writeRecordsTable(cmd, recs)
 	return nil
+}
+
+// writeRecordsJSON writes recs as a JSON array to the command's stdout.
+func writeRecordsJSON(cmd *cobra.Command, recs []*record.Record) error {
+	data, err := json.MarshalIndent(recs, "", "  ")
+	if err != nil {
+		return fmt.Errorf("marshal: %w", err)
+	}
+	_, err = cmd.OutOrStdout().Write(append(data, '\n'))
+	return err
+}
+
+// writeRecordsTable writes recs as a tab-separated table with a header.
+func writeRecordsTable(cmd *cobra.Command, recs []*record.Record) {
+	out := cmd.OutOrStdout()
+	fmt.Fprintln(out, "ID\tKIND\tSUBJECT\tCREATED_AT")
+	for _, r := range recs {
+		fmt.Fprintf(out, "%s\t%s\t%s\t%s\n", r.ID, r.Kind, r.Subject, r.CreatedAt.Format("2006-01-02T15:04:05Z07:00"))
+	}
 }

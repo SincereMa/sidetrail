@@ -135,41 +135,131 @@ verify it against the matching `*_checksums.txt`, and place the
 
 ## CLI surface
 
-The  `sidetrail` binary is a read-dominant command. Most calls ask a
-question; a few write a record. The `.sidetrail/` store is discovered
-by walking upward from the current working directory unless
-`--root` points elsewhere. The CLI surface has thirteen subcommands:
+The `sidetrail` binary is agent-driven with five commands:
 
 | Command | Purpose |
 | --- | --- |
-| `sidetrail add <file>` | Validate a record file and add it to the store. |
-| `sidetrail get <id> [--human]` | Fetch a record by id (exact, then prefix). |
-| `sidetrail list [--kind K] [--limit N] [--json]` | List records, newest first. |
-| `sidetrail ask --scope <s> [--kind] [--tag] [--limit] [--json]` | Query records whose scope matches a pattern. |
-| `sidetrail context --file <path> [--radius N] [--limit] [--json]` | Aggregate records relevant to a file path. |
-| `sidetrail verify <id>` | Refresh a record's `last_verified_at`. |
-| `sidetrail supersede <old-id> --new <file>` | Mark a record superseded and add a replacement. |
-| `sidetrail init [--root <project>] [--no-write]` | Seed a `.sidetrail/` store from existing project docs. |
-| `sidetrail promote [<id>...] [--all]` | Promote seed records from `_seed/` to the active store. |
-| `sidetrail draft <kind> --subject <s>` | Create a draft record for human review in `_draft/`. |
-| `sidetrail status <id> <archived\|hidden\|active>` | Transition a record's status. |
-| `sidetrail validate <file>... [--json]` | Validate record files against the schema. |
-| `sidetrail health [--json] [--stale-days N]` | Report project health signals and stale records. |
+| `sidetrail context --file <path>` | Read records relevant to a file |
+| `sidetrail add <file>` | Validate and store a record |
+| `sidetrail update <id> --file <json>` | Update an existing record |
+| `sidetrail health` | Report project health signals |
+| `sidetrail init` | Create a `.sidetrail/` directory |
 
-The first host-agent integration point is `sidetrail context`: point
-it at the file the agent is about to edit, and it returns the
-records the team has filed about that file and its enclosing
-scopes.
+The `.sidetrail/` store is discovered by walking upward from the
+current working directory unless `--root` points elsewhere. The
+store is auto-created on first `add`.
 
-Adapter guides for specific host agents live in
-[docs/agents/](docs/agents/). The first is for
-[OpenCode](docs/agents/opencode.md), a model-agnostic coding
-agent.
+## Quick start
 
-`sidetrail init` is the cold-start path. It scans the canonical
-project paths and writes scrape-derived candidate records to
-`.sidetrail/_seed/`. Skipping init is valid; the sidecar is usable
-from empty.
+**1. Initialize (optional, first time only):**
+
+```bash
+sidetrail init
+# Output: created /path/to/project/.sidetrail
+```
+
+**2. Agent reads context before editing:**
+
+```bash
+sidetrail context --file src/auth/login.go
+# Returns: decisions, constraints, signals for this file
+
+sidetrail context --file src/auth/login.go --json
+# Returns JSON for agent consumption
+```
+
+**3. Agent records a decision:**
+
+```bash
+cat > /tmp/record.json << 'EOF'
+{
+  "kind": "decision",
+  "scope": "src/auth/login.go",
+  "subject": "Use bcrypt for password hashing",
+  "reason": "OWASP recommended, good compatibility",
+  "source_type": "human",
+  "author": "zhangsan",
+  "status": "active"
+}
+EOF
+
+sidetrail add /tmp/record.json
+# Output: 01ARZ3NDEKTSV4RRFFQ69G5FAV
+```
+
+**4. Agent records a constraint:**
+
+```bash
+cat > /tmp/constraint.json << 'EOF'
+{
+  "kind": "constraint",
+  "scope": "src/billing/",
+  "subject": "Do not modify billing code",
+  "reason": "Compliance review pending, frozen until Q3",
+  "source_type": "human",
+  "author": "lisi",
+  "status": "active"
+}
+EOF
+
+sidetrail add /tmp/constraint.json
+```
+
+**5. Agent supersedes a record:**
+
+```bash
+# Write new record
+cat > /tmp/new-decision.json << 'EOF'
+{
+  "kind": "decision",
+  "scope": "src/auth/login.go",
+  "subject": "Switch to argon2 for password hashing",
+  "reason": "bcrypt not resistant enough to GPU attacks",
+  "source_type": "human",
+  "author": "zhangsan",
+  "status": "active",
+  "supersedes": "01ARZ3NDEKTSV4RRFFQ69G5FAV"
+}
+EOF
+
+sidetrail add /tmp/new-decision.json
+
+# Update old record status
+cat > /tmp/update-old.json << 'EOF'
+{"status": "superseded", "superseded_by": "01ARZ3NDEKTSV4RRFFQ69G5FAX"}
+EOF
+
+sidetrail update 01ARZ3NDEKTSV4RRFFQ69G5FAV --file /tmp/update-old.json
+```
+
+**6. Check project health:**
+
+```bash
+sidetrail health
+# Output:
+# Total records:    12
+# Active chains:    2
+# Unique scopes:    5
+#
+# By kind:
+#   decision       5
+#   constraint     3
+#   signal         4
+
+sidetrail health --json
+# Structured JSON output
+```
+
+### Agent workflow
+
+```
+1. Agent assigned task: modify src/auth/login.go
+2. Run: sidetrail context --file src/auth/login.go --json
+3. Get: "Do not modify billing code", "Use bcrypt for hashing"
+4. Agent makes decision based on context
+5. Run: sidetrail add /tmp/decision.json (record new decision)
+6. Start editing code
+```
 
 ## Contributing
 

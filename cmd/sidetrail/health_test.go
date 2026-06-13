@@ -3,6 +3,8 @@ package sidetrail
 import (
 	"bytes"
 	"encoding/json"
+	"os"
+	"path/filepath"
 	"strings"
 	"testing"
 	"time"
@@ -10,6 +12,15 @@ import (
 	"github.com/SincereMa/sidetrail/internal/record"
 	"github.com/SincereMa/sidetrail/internal/storage"
 )
+
+// initStore creates a .sidetrail/ directory for testing.
+func initStore(t *testing.T, dir string) {
+	t.Helper()
+	storeDir := filepath.Join(dir, storeDirName)
+	if err := os.MkdirAll(storeDir, 0o755); err != nil {
+		t.Fatal(err)
+	}
+}
 
 // TestHealthEmpty verifies that an empty store prints a message.
 func TestHealthEmpty(t *testing.T) {

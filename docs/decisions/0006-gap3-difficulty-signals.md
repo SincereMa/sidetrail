@@ -1,10 +1,14 @@
 # ADR-0006: Gap 3 — Difficulty signals
 
-- **Status:** Accepted
+- **Status:** Accepted (see note below)
 - **Date:** 2026-06-06
 - **Supersedes:** —
 - **Superseded by:** —
 - **Maintained by:** ADR-0001 (Memory model and I/O surface)
+
+> **Note (2026-06-13):** The `ask` command has been removed. Use
+> `context --file <path>` to query records for a file area.
+> See [README.md](../../README.md).
 
 ## Context and background
 

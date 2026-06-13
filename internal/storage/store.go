@@ -35,25 +35,7 @@ func (s *Store) Root() string { return s.root }
 
 // kindDir returns the on-disk subdirectory for kind k.
 func (s *Store) kindDir(k record.Kind) string {
-	return filepath.Join(s.root, pluralize(string(k)))
-}
-
-// pluralize maps a kind name to its conventional on-disk
-// directory name. Centralized here so the layout is one edit.
-func pluralize(kind string) string {
-	switch kind {
-	case "decision":
-		return "decisions"
-	case "constraint":
-		return "constraints"
-	case "signal":
-		return "signals"
-	case "experiment":
-		return "experiments"
-	case "incident":
-		return "incidents"
-	}
-	return kind + "s"
+	return filepath.Join(s.root, string(k)+"s")
 }
 
 // Write persists r to disk and returns the absolute path of the
@@ -74,29 +56,7 @@ func (s *Store) Write(r *record.Record) (string, error) {
 	return s.writeToDir(r, dir)
 }
 
-// WriteSeed persists r under the .sidetrail/_seed/ subdirectory.
-// Seeds are scrape-derived candidates waiting for human review;
-// they live in their own subdirectory so the canonical kind
-// listings (decisions, constraints, ...) do not surface them
-// without an explicit --include-seed flag (a future PR).
-//
-// The Kind field on a seed record is still required to be valid;
-// WriteSeed is "where to write" not "what to validate".
-func (s *Store) WriteSeed(r *record.Record) (string, error) {
-	if !r.Kind.Valid() {
-		return "", fmt.Errorf("invalid kind: %q", r.Kind)
-	}
-	if r.ID == "" {
-		return "", fmt.Errorf("record id must not be empty")
-	}
-	dir := filepath.Join(s.root, "_seed")
-	if err := os.MkdirAll(dir, 0o755); err != nil {
-		return "", fmt.Errorf("mkdir %q: %w", dir, err)
-	}
-	return s.writeToDir(r, dir)
-}
-
-// writeToDir is the common path of Write and WriteSeed. The
+// writeToDir is the common path of Write. The
 // caller has already validated the record and ensured dir
 // exists. The atomic-write plumbing lives here so both entry
 // points behave identically.
@@ -295,23 +255,6 @@ func sortByCreatedAtDesc(recs []*record.Record) {
 	sort.SliceStable(recs, func(i, j int) bool {
 		return recs[i].CreatedAt.After(recs[j].CreatedAt)
 	})
-}
-
-// WriteDraft persists r under the .sidetrail/_draft/ subdirectory.
-// Drafts are complete, schema-valid records waiting for human
-// review before being promoted to the main store via `sidetrail promote`.
-func (s *Store) WriteDraft(r *record.Record) (string, error) {
-	if !r.Kind.Valid() {
-		return "", fmt.Errorf("invalid kind: %q", r.Kind)
-	}
-	if r.ID == "" {
-		return "", fmt.Errorf("record id must not be empty")
-	}
-	dir := filepath.Join(s.root, "_draft")
-	if err := os.MkdirAll(dir, 0o755); err != nil {
-		return "", fmt.Errorf("mkdir %q: %w", dir, err)
-	}
-	return s.writeToDir(r, dir)
 }
 
 // Ask returns records whose scope matches the pattern, optionally

@@ -22,8 +22,15 @@ it in their project.
 
 ## When to use the SideTrail CLI
 
-The `sidetrail` binary is your read interface. The human handles
-writes; you handle reads. Everything below is read-only.
+The `sidetrail` binary has five commands:
+
+| Command | Purpose |
+|---------|---------|
+| `context` | Read records relevant to a file |
+| `add` | Validate and store a record |
+| `update` | Update an existing record |
+| `health` | Report project health signals |
+| `init` | Create a `.sidetrail/` directory |
 
 ### Before editing a file
 
@@ -46,66 +53,65 @@ sidetrail context --file path/to/file.go --limit 20     # more results
 When the human asks about a topic and you suspect there is
 project-specific context (e.g., "what do we know about billing?",
 "why is auth done this way?", "why did we choose library X?"),
-run:
+use `context` with a file path in that area:
 
 ```sh
-sidetrail ask --scope <topic> --kind decision --json
-sidetrail ask --scope <topic> --kind constraint --json
-sidetrail ask --scope billing --limit 10 --json
+sidetrail context --file billing/handler.go --json
+sidetrail context --file auth/login.go --json
 ```
 
-`--scope` is required. `--kind` and `--limit` are optional. The
-`--json` flag gives you structured output you can reason about.
-
-### When you need a specific record
-
-If you know a record ID (from a previous context result or a
-list), you can fetch it directly:
-
-```sh
-sidetrail get <id>
-sidetrail get <id> --human   # human-readable
-```
-
-### When you want to see recent decisions
-
-```sh
-sidetrail list --limit 10
-sidetrail list --kind decision --limit 10
-```
-
-## When to suggest a record (not write one)
+### When you want to record a decision or constraint
 
 If you identify a decision, constraint, or health signal that is
-not yet recorded — **do not write it yourself**. Instead:
+not yet recorded, create a JSON file and use `sidetrail add`:
 
-1. Create a JSON file with the correct schema.
-2. Tell the human: "I'd like to suggest a record. Please review
-   the file at `.sidetrail/_seed/<suggested-name>.json`."
-3. Wait. The human will run `sidetrail add <file>` or
-   `sidetrail promote` when they are ready.
+```sh
+# Create the record file
+cat > /tmp/record.json << 'EOF'
+{
+  "kind": "decision",
+  "scope": "src/auth/login.go",
+  "subject": "Use bcrypt for password hashing",
+  "reason": "OWASP recommended, good compatibility",
+  "source_type": "human",
+  "author": "agent",
+  "created_at": "2026-06-13T00:00:00Z",
+  "last_verified_at": "2026-06-13T00:00:00Z",
+  "status": "active",
+  "decided_at": "2026-06-13T00:00:00Z"
+}
+EOF
 
-`sidetrail validate <file>` is a useful pre-flight check before
-the human commits. `sidetrail add <file>` is the human's
-approval gate.
+# Add it to the store
+sidetrail add /tmp/record.json
+```
+
+### When you need to update a record
+
+```sh
+# Create update file
+cat > /tmp/update.json << 'EOF'
+{"status": "superseded", "superseded_by": "new-record-id"}
+EOF
+
+# Update the record
+sidetrail update <id> --file /tmp/update.json
+```
 
 ## What you must not do
 
-- **Do not call `sidetrail add` directly.** That is the human's
-  job. You suggest; they decide.
-- **Do not run `sidetrail init`.** That overwrites existing
-  records.
+- **Do not run `sidetrail init`.** That creates the store directory;
+  it is usually already there.
 - **Do not modify `.sidetrail/` files directly.** That bypasses
   validation and the audit trail.
-- **Do not run any command that writes to disk.** The CLI is
-  read-only from your perspective.
+- **Do not create records without required fields.** Each kind has
+  required fields: `decided_at` for decisions, `started_at` for
+  experiments, `occurred_at` for incidents.
 
 ## Conventions
 
 - Default output is human-readable. Use `--json` when you need
   structured data.
-- `sidetrail get <id>` is fast. Prefetch a record if you suspect
-  you will need it.
 - All data is local. No network calls. No LLM calls. No
   background process.
 
@@ -114,10 +120,9 @@ approval gate.
 | You want to... | Run |
 | --- | --- |
 | Read context for a file | `sidetrail context --file <path>` |
-| Find decisions by topic | `sidetrail ask --scope <topic> --kind decision` |
-| Get a specific record | `sidetrail get <id>` |
-| List recent records | `sidetrail list --limit 10` |
-| Validate a draft file | `sidetrail validate <file>` |
+| Add a new record | `sidetrail add <json-file>` |
+| Update an existing record | `sidetrail update <id> --file <json>` |
+| Check project health | `sidetrail health` |
 | Check if binary is installed | `sidetrail --version` |
 
 ## If sidetrail is not installed
