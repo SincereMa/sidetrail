@@ -46,6 +46,8 @@ meaningful choice, constraint, or lesson — not for routine edits.
   "reason": "Stripe has better API docs and lower fees than alternatives",
   "source_type": "agent-suggested",
   "author": "agent",
+  "created_at": "2026-01-15T00:00:00Z",
+  "last_verified_at": "2026-01-15T00:00:00Z",
   "status": "active",
   "decided_at": "2026-01-15T00:00:00Z"
 }
@@ -62,6 +64,8 @@ meaningful choice, constraint, or lesson — not for routine edits.
   "severity": "hard",
   "source_type": "agent-suggested",
   "author": "agent",
+  "created_at": "2026-01-15T00:00:00Z",
+  "last_verified_at": "2026-01-15T00:00:00Z",
   "status": "active"
 }
 ```
@@ -76,6 +80,8 @@ meaningful choice, constraint, or lesson — not for routine edits.
   "reason": "Need to evaluate caching options for session data",
   "source_type": "agent-suggested",
   "author": "agent",
+  "created_at": "2026-01-15T00:00:00Z",
+  "last_verified_at": "2026-01-15T00:00:00Z",
   "status": "in_progress",
   "started_at": "2026-01-15T00:00:00Z"
 }
@@ -91,6 +97,8 @@ meaningful choice, constraint, or lesson — not for routine edits.
   "reason": "Webhook handler exceeded 30s timeout under load",
   "source_type": "agent-suggested",
   "author": "agent",
+  "created_at": "2026-01-15T00:00:00Z",
+  "last_verified_at": "2026-01-15T00:00:00Z",
   "status": "resolved",
   "occurred_at": "2026-01-15T00:00:00Z",
   "resolved_at": "2026-01-16T00:00:00Z"

@@ -8,7 +8,7 @@ The behavioral rules are identical across agents — only the file format differ
 | File | Purpose | Audience |
 |------|---------|----------|
 | `CLAUDE.md` | Project-level instructions | Any agent that reads project files |
-| `skill/SKILL.md` | OpenCode skill file | OpenCode agents |
+| `opencode/skill/SKILL.md` | OpenCode skill file | OpenCode agents |
 | `opencode.md` | OpenCode-specific notes | OpenCode users |
 
 ## How It Works
