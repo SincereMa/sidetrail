@@ -1,0 +1,12 @@
+{
+  "id": "01KV0FPMCABYPT24WSZ2PDQ4GY",
+  "kind": "constraint",
+  "scope": ".",
+  "subject": "No raw path separators: use filepath.Join everywhere",
+  "reason": "Cross-platform requirement: raw separators break on the other OS",
+  "source_type": "human",
+  "author": "maintainer",
+  "created_at": "2026-06-13T00:00:00Z",
+  "last_verified_at": "2026-06-13T00:00:00Z",
+  "status": "active"
+}

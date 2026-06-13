@@ -1,0 +1,12 @@
+{
+  "id": "01KV0F839XZ613PE6D5ST2PK3R",
+  "kind": "constraint",
+  "scope": "internal/",
+  "subject": "Never use os/exec with sh -c or cmd /c",
+  "reason": "Security: shell invocation via sh -c allows injection. Use os/exec with explicit binary args only.",
+  "source_type": "human",
+  "author": "maintainer",
+  "created_at": "2026-06-13T00:00:00Z",
+  "last_verified_at": "2026-06-13T00:00:00Z",
+  "status": "active"
+}

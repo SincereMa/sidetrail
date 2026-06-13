@@ -1,0 +1,12 @@
+{
+  "id": "01KV0FPMC98NKVC0B542A0GF3W",
+  "kind": "decision",
+  "scope": ".",
+  "subject": "Rename from Cortex SideMark to SideTrail",
+  "reason": "Search collision with 'Cortex' in LLM ecosystem; SideMark was descriptive not a brand; .cortex/ directory forced by binary name",
+  "source_type": "human",
+  "author": "maintainer",
+  "created_at": "2026-06-13T00:00:00Z",
+  "last_verified_at": "2026-06-13T00:00:00Z",
+  "status": "active"
+}

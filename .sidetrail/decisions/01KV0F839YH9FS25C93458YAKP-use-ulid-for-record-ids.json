@@ -1,0 +1,12 @@
+{
+  "id": "01KV0F839YH9FS25C93458YAKP",
+  "kind": "decision",
+  "scope": "internal/record/",
+  "subject": "Use ULID for record IDs",
+  "reason": "ULIDs are sortable by time, collision-resistant, and URL-safe — better than UUIDs for record identifiers",
+  "source_type": "human",
+  "author": "maintainer",
+  "created_at": "2026-06-13T00:00:00Z",
+  "last_verified_at": "2026-06-13T00:00:00Z",
+  "status": "active"
+}

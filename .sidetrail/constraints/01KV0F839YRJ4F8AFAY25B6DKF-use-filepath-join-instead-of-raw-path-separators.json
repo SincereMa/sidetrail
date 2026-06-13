@@ -1,0 +1,12 @@
+{
+  "id": "01KV0F839YRJ4F8AFAY25B6DKF",
+  "kind": "constraint",
+  "scope": "internal/",
+  "subject": "Use filepath.Join instead of raw path separators",
+  "reason": "Cross-platform: raw / or \\ separators break on the other OS",
+  "source_type": "human",
+  "author": "maintainer",
+  "created_at": "2026-06-13T00:00:00Z",
+  "last_verified_at": "2026-06-13T00:00:00Z",
+  "status": "active"
+}

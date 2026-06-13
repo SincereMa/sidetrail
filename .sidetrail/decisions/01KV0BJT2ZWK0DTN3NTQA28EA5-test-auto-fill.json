@@ -1,0 +1,13 @@
+{
+  "id": "01KV0BJT2ZWK0DTN3NTQA28EA5",
+  "kind": "decision",
+  "scope": "cmd/sidetrail/",
+  "subject": "Test auto-fill",
+  "reason": "Verify defaults work",
+  "source_type": "human",
+  "author": "tester",
+  "created_at": "2026-06-13T11:23:56Z",
+  "last_verified_at": "2026-06-13T11:23:56Z",
+  "status": "active",
+  "decided_at": "2026-06-13T11:23:56Z"
+}
